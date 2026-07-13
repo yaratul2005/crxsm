@@ -770,6 +770,119 @@ if ($path === 'login') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo htmlspecialchars($pageTitle); ?></title>
     <meta name="description" content="<?php echo htmlspecialchars($pageDescription); ?>">
+    <?php if (empty($path)): ?>
+    <!-- Structured Data (JSON-LD) for SEO, GEO, AEO & Software -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "SoftwareApplication",
+          "@id": "<?php echo $baseUrl; ?>/#software",
+          "name": "Ratuls ACT",
+          "alternateName": "Ratul Ads Conversion Tracker",
+          "description": "A professional, self-hosted first-party server-side Conversion API (CAPI) WordPress plugin that routes events through your own domain, extends cookie lifespans, and bypasses ad-blockers for Meta, TikTok, and Google Ads.",
+          "applicationCategory": "BusinessApplication",
+          "operatingSystem": "WordPress, WooCommerce",
+          "downloadUrl": "<?php echo $baseUrl; ?>",
+          "author": {
+            "@type": "Person",
+            "@id": "https://yaratul.com/#person",
+            "name": "Yaser Ahmmed Ratul",
+            "url": "https://yaratul.com",
+            "image": "https://yaratul.com/media/yar.jpeg",
+            "jobTitle": "Full-Stack Developer & SEO Specialist",
+            "address": {
+              "@type": "PostalAddress",
+              "addressLocality": "Cumilla Cantonment",
+              "addressRegion": "Cumilla",
+              "postalCode": "3501",
+              "addressCountry": "Bangladesh"
+            }
+          },
+          "offers": {
+            "@type": "Offer",
+            "price": "0.00",
+            "priceCurrency": "USD",
+            "priceValidUntil": "<?php echo date('Y-12-31'); ?>",
+            "valueAddedTaxIncluded": "false"
+          }
+        },
+        {
+          "@type": "Person",
+          "@id": "https://yaratul.com/#person",
+          "name": "Yaser Ahmmed Ratul",
+          "alternateName": ["MD Yaser Ahmmed Ratul", "yaratul", "yaratul2005"],
+          "url": "https://yaratul.com",
+          "image": "https://yaratul.com/media/yar.jpeg",
+          "description": "Yaser Ahmmed Ratul is a professional Full-Stack Developer, DevOps Engineer, and SEO Specialist from Cumilla, Bangladesh. Inventor of Ratuls ACT and WirePhoenix PHP Library.",
+          "jobTitle": "Full-Stack Developer & SEO Specialist",
+          "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Cumilla Cantonment",
+            "addressRegion": "Cumilla",
+            "postalCode": "3501",
+            "addressCountry": "Bangladesh"
+          },
+          "hasCredential": {
+            "@type": "EducationalOccupationalCredential",
+            "name": "Google AI Professional Certificate",
+            "credentialCategory": "Professional Certificate",
+            "recognizedBy": {
+              "@type": "Organization",
+              "name": "Google"
+            }
+          },
+          "sameAs": [
+            "https://www.linkedin.com/in/yaratul2004/",
+            "https://x.com/yaratul2004",
+            "https://www.facebook.com/yaratul2004/",
+            "https://www.instagram.com/i.m.ratul/",
+            "https://github.com/yaratul2005"
+          ]
+        },
+        {
+          "@type": "FAQPage",
+          "@id": "<?php echo $baseUrl; ?>/#faq",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "What is Ratuls ACT?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Ratuls ACT (Ratul Ads Conversion Tracker) is a self-hosted, first-party server-side Conversion API (CAPI) WordPress plugin. It routes client-side events through your own first-party domain, stitches browser identities, and dispatches them synchronously to Meta (Facebook), TikTok, and Google Ads with perfect event deduplication."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "How does Ratuls ACT defeat Safari ITP?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "It bypasses Safari's Intelligent Tracking Prevention (ITP) by generating secure first-party HTTP Set-Cookie headers via server-side PHP, extending ad-click identifier lifespans (fbclid, gclid) from the JavaScript-capped 7 days to a full 2 years."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "How does it bypass ad-blockers?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "It proxies event dispatches through a local REST endpoint (/wp-json/ratul-ads-conversion-tracker/v1/pixel) directly on your site, bypassing browser-level blacklists and tracking filters natively."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Is Ratuls ACT really free?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Yes! Ratuls ACT is 100% self-hosted and open-source. Unlike services like Stape.io or Google Cloud GTM containers which charge $20 to $120 per month, hosting Ratuls ACT directly on your own WordPress server costs $0 monthly."
+              }
+            }
+          ]
+        }
+      ]
+    }
+    </script>
+    <?php endif; ?>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
