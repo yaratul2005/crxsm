@@ -2,6 +2,7 @@
 /**
  * CRXSM Front Router & Public Site
  */
+define('CRXSM_ACCESS', true);
 
 // 1. Setup Autoloader
 spl_autoload_register(function ($class) {

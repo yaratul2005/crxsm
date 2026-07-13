@@ -3,7 +3,7 @@
  * CRXSM Customer Dashboard View
  */
 
-if (!defined('Vault\DB')) {
+if (!defined('CRXSM_ACCESS')) {
     http_response_code(403);
     die("Direct access not allowed.");
 }
