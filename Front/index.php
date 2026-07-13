@@ -897,16 +897,16 @@ if ($path === 'login') {
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-color: #0b0f19;
-            --card-bg: rgba(17, 24, 39, 0.4);
-            --border-color: rgba(255, 255, 255, 0.08);
-            --text-color: #f3f4f6;
-            --text-muted: #9ca3af;
-            --primary: #6366f1;
-            --primary-hover: #4f46e5;
-            --success: #10b981;
-            --danger: #ef4444;
-            --glow: rgba(99, 102, 241, 0.1);
+            --bg-color: #f8fafc;
+            --card-bg: rgba(255, 255, 255, 0.75);
+            --border-color: rgba(15, 23, 42, 0.08);
+            --text-color: #0f172a;
+            --text-muted: #475569;
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --success: #059669;
+            --danger: #dc2626;
+            --glow: rgba(37, 99, 235, 0.1);
         }
 
         * {
@@ -919,8 +919,8 @@ if ($path === 'login') {
             font-family: 'Outfit', sans-serif;
             background-color: var(--bg-color);
             background-image: 
-                radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.08) 0px, transparent 50%),
-                radial-gradient(at 100% 100%, rgba(139, 92, 246, 0.06) 0px, transparent 50%);
+                radial-gradient(at 0% 0%, rgba(37, 99, 235, 0.06) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(14, 165, 233, 0.04) 0px, transparent 50%);
             color: var(--text-color);
             min-height: 100vh;
             display: flex;
@@ -931,7 +931,7 @@ if ($path === 'login') {
         /* Header Navigation */
         header.site-nav {
             border-bottom: 1px solid var(--border-color);
-            background: rgba(11, 15, 25, 0.8);
+            background: rgba(255, 255, 255, 0.85);
             backdrop-filter: blur(16px);
             position: sticky;
             top: 0;
@@ -950,7 +950,7 @@ if ($path === 'login') {
         .nav-logo {
             font-size: 1.6rem;
             font-weight: 700;
-            color: #fff;
+            color: #0f172a;
             text-decoration: none;
             letter-spacing: -0.5px;
         }
@@ -974,13 +974,13 @@ if ($path === 'login') {
         }
 
         .nav-links a:hover {
-            color: #fff;
+            color: var(--primary);
         }
 
         .nav-links a.btn-nav {
             padding: 0.5rem 1.2rem;
-            background: rgba(99, 102, 241, 0.1);
-            border: 1px solid rgba(99, 102, 241, 0.3);
+            background: rgba(37, 99, 235, 0.05);
+            border: 1px solid rgba(37, 99, 235, 0.2);
             border-radius: 8px;
             color: var(--primary);
         }
@@ -1032,7 +1032,7 @@ if ($path === 'login') {
             max-width: 480px;
             width: 100%;
             margin: 0 auto;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 20px 40px rgba(15, 23, 42, 0.04);
         }
 
         .auth-card h2 {
@@ -1070,10 +1070,10 @@ if ($path === 'login') {
         input {
             width: 100%;
             padding: 0.8rem 1.2rem;
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.06);
+            background: rgba(15, 23, 42, 0.015);
+            border: 1px solid rgba(15, 23, 42, 0.1);
             border-radius: 10px;
-            color: #fff;
+            color: #0f172a;
             font-family: inherit;
             font-size: 0.95rem;
             transition: all 0.2s;
@@ -1082,7 +1082,7 @@ if ($path === 'login') {
         input:focus {
             outline: none;
             border-color: var(--primary);
-            background: rgba(255, 255, 255, 0.05);
+            background: #fff;
             box-shadow: 0 0 0 4px var(--glow);
         }
 
@@ -1100,7 +1100,7 @@ if ($path === 'login') {
             font-weight: 600;
             cursor: pointer;
             transition: background-color 0.2s, transform 0.1s;
-            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.15);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
             text-decoration: none;
         }
 
@@ -1112,6 +1112,18 @@ if ($path === 'login') {
             transform: scale(0.98);
         }
 
+        .btn-secondary {
+            background: rgba(15, 23, 42, 0.04) !important;
+            border: 1px solid rgba(15, 23, 42, 0.1) !important;
+            color: var(--text-color) !important;
+            box-shadow: none !important;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(15, 23, 42, 0.08) !important;
+            color: var(--text-color) !important;
+        }
+
         .alert {
             padding: 0.8rem 1.2rem;
             border-radius: 8px;
@@ -1120,9 +1132,9 @@ if ($path === 'login') {
         }
 
         .alert-danger {
-            background: rgba(239, 68, 68, 0.1);
-            border: 1px solid rgba(239, 68, 68, 0.2);
-            color: #fca5a5;
+            background: rgba(220, 38, 38, 0.06);
+            border: 1px solid rgba(220, 38, 38, 0.15);
+            color: #b91c1c;
         }
 
         /* Single Post Styling */
@@ -1155,7 +1167,7 @@ if ($path === 'login') {
         .post-body {
             font-size: 1.1rem;
             line-height: 1.8;
-            color: #d1d5db;
+            color: #334155;
         }
 
         /* Canvas rendering styles */
@@ -1177,7 +1189,7 @@ if ($path === 'login') {
             font-weight: 800;
             line-height: 1.2;
             margin-bottom: 1.5rem;
-            background: linear-gradient(135deg, #fff 40%, #a5b4fc);
+            background: linear-gradient(135deg, #0f172a 40%, #2563eb);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
@@ -1278,7 +1290,7 @@ if ($path === 'login') {
         /* Footer */
         footer.site-footer {
             border-top: 1px solid var(--border-color);
-            background: rgba(11, 15, 25, 0.9);
+            background: #f1f5f9;
             padding: 4rem 2rem 2rem 2rem;
             font-size: 0.9rem;
             color: var(--text-muted);
@@ -1303,7 +1315,7 @@ if ($path === 'login') {
         .footer-logo {
             font-size: 1.4rem;
             font-weight: 700;
-            color: #fff;
+            color: #0f172a;
             margin-bottom: 1rem;
         }
 
@@ -1312,7 +1324,7 @@ if ($path === 'login') {
         }
 
         .footer-col h4 {
-            color: #fff;
+            color: #0f172a;
             margin-bottom: 1.25rem;
             font-weight: 600;
         }
@@ -1331,7 +1343,7 @@ if ($path === 'login') {
         }
 
         .footer-links a:hover {
-            color: #fff;
+            color: var(--primary);
         }
 
         .social-links {
@@ -1347,7 +1359,7 @@ if ($path === 'login') {
             width: 36px;
             height: 36px;
             border-radius: 8px;
-            background: rgba(255, 255, 255, 0.03);
+            background: rgba(15, 23, 42, 0.02);
             border: 1px solid var(--border-color);
             color: var(--text-muted);
             text-decoration: none;
@@ -1363,7 +1375,7 @@ if ($path === 'login') {
         .footer-bottom {
             max-width: 1200px;
             margin: 0 auto;
-            border-top: 1px solid var(--border-color);
+            border-top: 1px solid rgba(15, 23, 42, 0.06);
             padding-top: 2rem;
             display: flex;
             justify-content: space-between;
@@ -1379,16 +1391,16 @@ if ($path === 'login') {
             filter: blur(80px);
             z-index: -2;
             pointer-events: none;
-            opacity: 0.15;
+            opacity: 0.08;
             animation: float-orb 15s infinite alternate ease-in-out;
         }
         .orb-1 {
-            background: #6366f1;
+            background: #2563eb;
             top: 15%;
             left: -10%;
         }
         .orb-2 {
-            background: #8b5cf6;
+            background: #0ea5e9;
             bottom: 20%;
             right: -10%;
             animation-delay: -5s;
@@ -1402,8 +1414,8 @@ if ($path === 'login') {
             position: absolute;
             inset: 0;
             background-image: 
-                linear-gradient(rgba(255, 255, 255, 0.007) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255, 255, 255, 0.007) 1px, transparent 1px);
+                linear-gradient(rgba(15, 23, 42, 0.015) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(15, 23, 42, 0.015) 1px, transparent 1px);
             background-size: 50px 50px;
             pointer-events: none;
             z-index: -1;
@@ -1438,7 +1450,7 @@ if ($path === 'login') {
             font-weight: 800;
             line-height: 1.15;
             margin: 1.2rem 0 1.5rem 0;
-            background: linear-gradient(135deg, #fff 40%, #818cf8);
+            background: linear-gradient(135deg, #0f172a 30%, #2563eb 90%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             letter-spacing: -0.02em;
@@ -1458,13 +1470,13 @@ if ($path === 'login') {
             display: inline-flex;
             align-items: center;
             gap: 0.5rem;
-            background: rgba(99, 102, 241, 0.12);
-            color: #a5b4fc;
+            background: rgba(37, 99, 235, 0.06);
+            color: #1d4ed8;
             padding: 0.4rem 1rem;
             border-radius: 50px;
             font-size: 0.8rem;
             font-weight: 600;
-            border: 1px solid rgba(99, 102, 241, 0.2);
+            border: 1px solid rgba(37, 99, 235, 0.15);
             letter-spacing: 0.05em;
             text-transform: uppercase;
         }
@@ -1524,11 +1536,11 @@ if ($path === 'login') {
 
         /* Glassmorphic Code Window */
         .code-window {
-            background: rgba(17, 24, 39, 0.55);
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: #0f172a;
+            border: 1px solid rgba(37, 99, 235, 0.15);
             border-radius: 16px;
             backdrop-filter: blur(24px);
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+            box-shadow: 0 20px 50px rgba(15, 23, 42, 0.15);
             overflow: hidden;
             text-align: left;
             transition: transform 0.3s;
@@ -1594,7 +1606,7 @@ if ($path === 'login') {
             font-weight: 800;
             text-align: center;
             margin: 1rem 0;
-            background: linear-gradient(135deg, #fff, #9ca3af);
+            background: linear-gradient(135deg, #0f172a, #475569);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
@@ -1606,7 +1618,7 @@ if ($path === 'login') {
             content: '';
             position: absolute;
             inset: -1px;
-            background: linear-gradient(135deg, rgba(99, 102, 241, 0.3), rgba(139, 92, 246, 0.1));
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.2), rgba(14, 165, 233, 0.1));
             border-radius: 16px;
             z-index: -1;
             opacity: 0;
@@ -1622,29 +1634,31 @@ if ($path === 'login') {
             margin-top: 3rem;
         }
         .feature-card {
-            background: rgba(17, 24, 39, 0.45);
-            border: 1px solid rgba(255, 255, 255, 0.06);
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
             backdrop-filter: blur(12px);
             border-radius: 16px;
             padding: 2.5rem 2rem;
-            transition: transform 0.3s, border-color 0.3s;
+            transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
+            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.02);
         }
         .feature-card:hover {
             transform: translateY(-5px);
-            border-color: rgba(99, 102, 241, 0.2);
+            border-color: rgba(37, 99, 235, 0.2);
+            box-shadow: 0 20px 40px rgba(37, 99, 235, 0.05);
         }
         .feat-icon {
             font-size: 1.5rem;
             margin-bottom: 1.5rem;
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(37, 99, 235, 0.05);
+            border: 1px solid rgba(37, 99, 235, 0.12);
             width: 48px;
             height: 48px;
             border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #a5b4fc;
+            color: var(--primary);
         }
         .feature-card h3 {
             font-size: 1.3rem;
@@ -1675,11 +1689,12 @@ if ($path === 'login') {
             display: flex;
             align-items: center;
             gap: 5rem;
-            background: rgba(17, 24, 39, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
             border-radius: 24px;
             padding: 4rem;
             backdrop-filter: blur(12px);
+            box-shadow: 0 15px 40px rgba(15, 23, 42, 0.02);
         }
         @media (max-width: 968px) {
             .creator-container {
@@ -1697,7 +1712,7 @@ if ($path === 'login') {
         .photo-glow-border {
             position: relative;
             padding: 6px;
-            background: linear-gradient(135deg, rgba(99, 102, 241, 0.5), rgba(139, 92, 246, 0.2));
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.4), rgba(14, 165, 233, 0.2));
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -1708,7 +1723,7 @@ if ($path === 'login') {
             height: 200px;
             border-radius: 50%;
             object-fit: cover;
-            border: 4px solid var(--bg-color);
+            border: 4px solid #fff;
         }
         .creator-details {
             flex: 1.2;
@@ -1717,10 +1732,13 @@ if ($path === 'login') {
             font-size: 2.2rem;
             font-weight: 800;
             margin-top: 0.75rem;
+            background: linear-gradient(135deg, #0f172a, #475569);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
         .creator-subtitle {
-            color: #a5b4fc;
-            font-weight: 500;
+            color: var(--primary);
+            font-weight: 600;
             margin-bottom: 1.5rem;
             font-size: 1.05rem;
         }
@@ -1755,21 +1773,22 @@ if ($path === 'login') {
             width: 100%;
             border-collapse: collapse;
             margin-top: 3rem;
-            background: rgba(17, 24, 39, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
             border-radius: 16px;
             overflow: hidden;
             text-align: left;
             min-width: 600px;
+            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.02);
         }
         .compare-table th, .compare-table td {
             padding: 1.5rem 2rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            border-bottom: 1px solid var(--border-color);
             font-size: 0.95rem;
         }
         .compare-table th {
-            background: rgba(255, 255, 255, 0.02);
-            color: #fff;
+            background: rgba(15, 23, 42, 0.02);
+            color: #0f172a;
             font-weight: 600;
             font-size: 0.85rem;
             text-transform: uppercase;
@@ -1779,11 +1798,12 @@ if ($path === 'login') {
             border-bottom: none;
         }
         .compare-table tr.active-row {
-            background: rgba(99, 102, 241, 0.06);
+            background: rgba(37, 99, 235, 0.04);
         }
         .compare-table tr.active-row td {
-            border-bottom: 1px solid rgba(99, 102, 241, 0.15);
-            color: #fff;
+            border-bottom: 1px solid rgba(37, 99, 235, 0.15);
+            color: var(--primary);
+            font-weight: 600;
         }
         @media (max-width: 768px) {
             .compare-table th, .compare-table td {
@@ -1794,11 +1814,11 @@ if ($path === 'login') {
 
         /* Trial Form styling updates */
         .trial-card {
-            background: rgba(17, 24, 39, 0.55);
-            border: 1px solid rgba(255, 255, 255, 0.07);
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
             border-radius: 20px;
             padding: 3rem;
-            box-shadow: 0 20px 45px rgba(0, 0, 0, 0.35);
+            box-shadow: 0 20px 45px rgba(15, 23, 42, 0.04);
             backdrop-filter: blur(24px);
         }
         .trial-card form {
