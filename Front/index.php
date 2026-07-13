@@ -36,6 +36,7 @@ if (!file_exists($configPath)) {
 }
 $config = require($configPath);
 $baseUrl = rtrim($config['base_url'], '/');
+$masterKey = $config['master_key'] ?? '';
 
 // Parse requested relative path
 $baseUrlPath = parse_url($baseUrl, PHP_URL_PATH) ?? '';
