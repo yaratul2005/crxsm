@@ -214,6 +214,206 @@ if ($path === 'login') {
     require __DIR__ . '/dashboard.php';
     $routeContent = ob_get_clean();
 
+} elseif ($path === 'claim-trial') {
+    // POST request to trigger trial verification mail
+    $error = null;
+    $success = null;
+    
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        Csrf::verifyOrDie();
+        $email = trim($_POST['email'] ?? '');
+        $name = trim($_POST['name'] ?? '');
+
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $error = "Please enter a valid email address.";
+        } elseif (empty($name)) {
+            $error = "Please enter your name.";
+        } else {
+            // Generate signed verification token valid for 2 hours
+            $expires = time() + 7200;
+            $token = hash_hmac('sha256', $email . '.' . $expires, $masterKey);
+            
+            $verifyLink = $baseUrl . '/verify-trial?email=' . urlencode($email) . '&name=' . urlencode($name) . '&expires=' . $expires . '&token=' . $token;
+            
+            $subject = "Verify Your Email - Ratuls ACT";
+            $message = "<h3>Welcome to Ratuls ACT!</h3>" .
+                       "<p>Hello " . htmlspecialchars($name) . ",</p>" .
+                       "<p>You are one click away from claiming your 1-Year Free Trial License for <strong>Ratuls ACT (Ratul Ads Conversion Tracker)</strong>.</p>" .
+                       "<p>Please click the button below to verify your email and issue your license key:</p>" .
+                       "<p><a href='{$verifyLink}' style='display:inline-block; padding:10px 20px; background:#6366f1; color:#fff; text-decoration:none; border-radius:6px; font-weight:bold;'>Verify Email & Claim Trial</a></p>" .
+                       "<p><small>This link is valid for 2 hours.</small></p>";
+                       
+            if (\Vault\Mailer::send($email, $subject, $message)) {
+                $success = "Verification email sent successfully! Please check your inbox (and spam folder) to complete your activation.";
+            } else {
+                $error = "Failed to send verification email. Please check SMTP configuration or contact the administrator.";
+            }
+        }
+    }
+    
+    // Display result page
+    $pageTitle = "Claim Trial - " . $siteName;
+    ob_start();
+    ?>
+    <div class="auth-card" style="max-width:550px; text-align:center;">
+        <h2>Free Trial Verification</h2>
+        <?php if ($error !== null): ?>
+            <div class="alert alert-danger"><?php echo htmlspecialchars($error); ?></div>
+            <a href="<?php echo $baseUrl; ?>" class="btn" style="margin-top:1rem;">Back to Home</a>
+        <?php elseif ($success !== null): ?>
+            <div class="success-illustration" style="margin: 1.5rem 0;">
+                <div class="success-icon" style="border-color:var(--success); color:var(--success); font-size: 3rem; width: 60px; height: 60px; border-radius: 50%; border: 2px solid; display: inline-flex; align-items: center; justify-content: center;">&checkmark;</div>
+            </div>
+            <div style="color:var(--text-muted); line-height:1.6; margin-bottom:1.5rem; font-size:0.95rem;">
+                <?php echo htmlspecialchars($success); ?>
+            </div>
+            <a href="<?php echo $baseUrl; ?>" class="btn">Back to Home</a>
+        <?php endif; ?>
+    </div>
+    <?php
+    $routeContent = ob_get_clean();
+
+} elseif ($path === 'verify-trial') {
+    // GET verification link
+    $email = $_GET['email'] ?? '';
+    $name = $_GET['name'] ?? '';
+    $expires = (int)($_GET['expires'] ?? 0);
+    $token = $_GET['token'] ?? '';
+
+    $error = '';
+    $success = '';
+
+    // Verify token
+    $expected = hash_hmac('sha256', $email . '.' . $expires, $masterKey);
+    if (time() > $expires) {
+        $error = "The verification link has expired. Please go back to the homepage and submit again.";
+    } elseif (!hash_equals($expected, $token)) {
+        $error = "Invalid verification signature. Request tampering detected.";
+    } else {
+        try {
+            // Find or create customer
+            $user = DB::fetch("SELECT id, name FROM users WHERE email = :email", [':email' => $email]);
+            if (!$user) {
+                // Auto-register customer
+                $randomPass = bin2hex(random_bytes(6));
+                $hashed = password_hash($randomPass, PASSWORD_BCRYPT);
+                DB::execute(
+                    "INSERT INTO users (name, email, password, status) VALUES (:name, :email, :password, 'active')",
+                    [':name' => $name, ':email' => $email, ':password' => $hashed]
+                );
+                $userId = (int)DB::lastInsertId();
+                Audit::log('customer', $userId, 'auto_register', "Auto-registered via trial request");
+                $newRegistration = true;
+            } else {
+                $userId = (int)$user['id'];
+                $newRegistration = false;
+            }
+
+            // Find Software product for Client ID: sw_542f42eee9271290367d2907fb8bc024
+            $softwareClientId = 'sw_542f42eee9271290367d2907fb8bc024';
+            $sw = DB::fetch("SELECT * FROM software WHERE client_id = :client_id", [':client_id' => $softwareClientId]);
+
+            if (!$sw) {
+                $error = "The product 'Ratuls ACT' is not currently registered in the database registry. Please contact admin.";
+            } else {
+                // Check if user already holds a license for this software
+                $existingLicense = DB::fetch(
+                    "SELECT id, license_key FROM licenses WHERE user_id = :user_id AND software_id = :sw_id",
+                    [':user_id' => $userId, ':sw_id' => $sw['id']]
+                );
+
+                if ($existingLicense) {
+                    $licenseKey = $existingLicense['license_key'];
+                    $success = "You already hold an active license key for this product. You have been logged in.";
+                } else {
+                    // Decrypt private key
+                    $decryptedPrivateKey = Crypto::decryptSecret($sw['private_key'], $masterKey);
+
+                    // Create 1-year license (Expires in 1 year)
+                    $expiresAt = date('Y-m-d H:i:s', strtotime('+1 year'));
+
+                    // Placeholder record
+                    DB::execute(
+                        "INSERT INTO licenses (software_id, user_id, license_key, activation_limit, status, expires_at) 
+                         VALUES (:sw_id, :user_id, '', 5, 'active', :expires_at)",
+                        [
+                            ':sw_id'      => $sw['id'],
+                            ':user_id'    => $userId,
+                            ':expires_at' => $expiresAt
+                        ]
+                    );
+                    $newLicId = (int)DB::lastInsertId();
+
+                    // Signed license token payload
+                    $licPayload = [
+                        'license_id'  => $newLicId,
+                        'software_id' => (int)$sw['id'],
+                        'user_id'     => $userId,
+                        'expires_at'  => $expiresAt
+                    ];
+
+                    $licenseKey = Crypto::generateLicenseKey($licPayload, $decryptedPrivateKey);
+
+                    // Update key
+                    DB::execute("UPDATE licenses SET license_key = :key WHERE id = :id", [':key' => $licenseKey, ':id' => $newLicId]);
+                    
+                    Audit::log('system', null, 'auto_issue_trial', "Issued 1-Year Trial License ID {$newLicId} to {$email}");
+
+                    // Send email containing license details
+                    $subject = "Your Ratuls ACT License Key & Download Link";
+                    $downloadUrl = $baseUrl . '/dashboard';
+                    
+                    $message = "<h3>Your Free Trial License is Ready!</h3>" .
+                               "<p>Hello " . htmlspecialchars($name) . ",</p>" .
+                               "<p>Thank you for verifying your email. Your 1-Year Free Trial License for <strong>Ratuls ACT (Ratul Ads Conversion Tracker)</strong> has been issued successfully.</p>" .
+                               "<p><strong>License Key:</strong></p>" .
+                               "<pre style='background:#f1f5f9; padding:10px; border-radius:6px; font-family:monospace; border:1px solid #cbd5e1; word-break:break-all;'>{$licenseKey}</pre>" .
+                               "<p><strong>Ed25519 Public Verification Key:</strong></p>" .
+                               "<pre style='background:#f1f5f9; padding:10px; border-radius:6px; font-family:monospace; border:1px solid #cbd5e1; word-break:break-all;'>{$sw['public_key']}</pre>" .
+                               "<p>To download the plugin, log into your customer dashboard:</p>" .
+                               "<p><a href='{$downloadUrl}' style='display:inline-block; padding:10px 20px; background:#6366f1; color:#fff; text-decoration:none; border-radius:6px; font-weight:bold;'>Go to Dashboard & Download</a></p>";
+                    
+                    if (isset($randomPass)) {
+                        $message .= "<p>We have auto-registered an account for you. Use these details to log in:<br>" .
+                                    "<strong>Email:</strong> {$email}<br>" .
+                                    "<strong>Temporary Password:</strong> {$randomPass}</p>" .
+                                    "<p>You can change this password at any time in your dashboard profile settings.</p>";
+                    }
+
+                    \Vault\Mailer::send($email, $subject, $message);
+                    $success = "Email verified successfully! Your 1-Year Free Trial License key has been issued and sent to your email address.";
+                }
+
+                // Log customer in automatically
+                Auth::loginCustomer($userId, $email, $name);
+            }
+        } catch (Exception $e) {
+            $error = "System error during validation: " . $e->getMessage();
+        }
+    }
+
+    $pageTitle = "Email Verified - " . $siteName;
+    ob_start();
+    ?>
+    <div class="auth-card" style="max-width:550px; text-align:center;">
+        <h2>Verification Result</h2>
+        <?php if (!empty($error)): ?>
+            <div class="alert alert-danger"><?php echo htmlspecialchars($error); ?></div>
+            <a href="<?php echo $baseUrl; ?>" class="btn">Back to Home</a>
+        <?php else: ?>
+            <div class="success-illustration" style="margin: 1.5rem 0;">
+                <div class="success-icon" style="border-color:var(--success); color:var(--success); font-size: 3rem; width: 60px; height: 60px; border-radius: 50%; border: 2px solid; display: inline-flex; align-items: center; justify-content: center;">&checkmark;</div>
+            </div>
+            <h3 style="color:var(--success); margin-bottom:1rem;">Verified successfully!</h3>
+            <div style="color:var(--text-muted); line-height:1.6; margin-bottom:2rem; font-size:0.95rem;">
+                <?php echo htmlspecialchars($success); ?>
+            </div>
+            <a href="<?php echo $baseUrl; ?>/dashboard" class="btn">Go to Dashboard</a>
+        <?php endif; ?>
+    </div>
+    <?php
+    $routeContent = ob_get_clean();
+
 } elseif (strpos($path, 'download/') === 0) {
     if (!Auth::isCustomerLoggedIn()) {
         header("Location: $baseUrl/login");
@@ -345,15 +545,128 @@ if ($path === 'login') {
         } else {
             // 3. Fallback: Default Front Page if empty path & no home page exists
             if (empty($path)) {
-                $pageTitle = $siteName;
+                $pageTitle = "Ratuls ACT - Self-Hosted Ads Conversion Tracker";
+                $pageDescription = "A professional server-side CAPI tracking plugin for WordPress & WooCommerce that defeats Safari ITP and ad-blockers for free.";
                 ob_start();
                 ?>
-                <div class="block-hero">
-                    <h1>Centrally Manage Your Licenses</h1>
-                    <p>Issue, track, and validate license keys securely with Ed25519 cryptography.</p>
-                    <div style="display:flex; justify-content:center; gap: 1rem; margin-top:2rem;">
-                        <a href="<?php echo $baseUrl; ?>/login" class="btn">Customer Dashboard</a>
-                        <a href="<?php echo $baseUrl; ?>/Setup/index.php" class="btn" style="background:rgba(255,255,255,0.05); border:1px solid var(--border-color); box-shadow:none;">Run Setup</a>
+                <!-- Hero Section with Trial Form -->
+                <div class="landing-hero">
+                    <div class="hero-left">
+                        <span class="badge-tag">First-Party WooCommerce CAPI</span>
+                        <h1>Defeat Safari ITP & Reclaim 100% of Your Ad Conversions</h1>
+                        <p>
+                            Stop wasting $20/month on third-party tag managers. <strong>Ratuls ACT</strong> is a self-hosted, server-side Conversion API (CAPI) gateway built directly inside WordPress to maximize your ad match quality and bypass blockers.
+                        </p>
+                        
+                        <div class="features-bullets">
+                            <div class="bullet"><span class="bullet-check">&checkmark;</span> Extends Safari cookies to 2 years</div>
+                            <div class="bullet"><span class="bullet-check">&checkmark;</span> Bypasses ad-blockers natively</div>
+                            <div class="bullet"><span class="bullet-check">&checkmark;</span> Perfect 1-to-1 event deduplication</div>
+                        </div>
+                    </div>
+
+                    <div class="hero-right">
+                        <div class="trial-card">
+                            <h3>Claim 1-Year Free Trial</h3>
+                            <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:1.5rem; text-align:center;">
+                                Enter your details to verify your email and instantly claim your trial license key.
+                            </p>
+                            <form action="<?php echo $baseUrl; ?>/claim-trial" method="post">
+                                <?php echo Csrf::getHiddenInput(); ?>
+                                <div class="form-group" style="text-align:left;">
+                                    <label class="form-label" style="font-size:0.75rem;">Your Name</label>
+                                    <input type="text" name="name" required placeholder="e.g. Yaser Ratul">
+                                </div>
+                                <div class="form-group" style="text-align:left;">
+                                    <label class="form-label" style="font-size:0.75rem;">Email Address</label>
+                                    <input type="email" name="email" required placeholder="e.g. ratul@great10.xyz">
+                                </div>
+                                <button type="submit" class="btn" style="padding:0.9rem; font-size:0.95rem;">Claim Free Trial Key</button>
+                            </form>
+                            <span style="font-size:0.7rem; color:var(--text-muted); display:block; margin-top:1rem; text-align:center;">
+                                *No credit card required. Includes version updates for 1 year.
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product Features Grid -->
+                <div class="landing-features">
+                    <h2>Advanced Server-Side Tracking Mechanics</h2>
+                    <p style="text-align:center; color:var(--text-muted); max-width:600px; margin: 0.5rem auto 3rem auto;">
+                        Architected natively in PHP to bypass browser privacy rules and deliver high Event Match Quality (EMQ) directly to ad networks.
+                    </p>
+                    
+                    <div class="features-grid">
+                        <div class="feature-card">
+                            <div class="feat-icon">&#128711;</div>
+                            <h3>ITP Bypass (2-Year Cookies)</h3>
+                            <p>Generates first-party Set-Cookie headers via server-side PHP, expanding ad click identifier lifespans (fbclid, gclid) from the JS-capped 7 days to a full 2 years.</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feat-icon">&#128737;</div>
+                            <h3>Ad-blocker Resiliency</h3>
+                            <p>Bypasses browser-level content blockers by routing conversions through local site endpoints (/wp-json/ratul-ads-conversion-tracker/v1/pixel).</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feat-icon">&#128100;</div>
+                            <h3>Deep Identity Stitching</h3>
+                            <p>Stitches MaxMind GeoIP resolution, Sucuri/Cloudflare real IP extraction, and browser user-agents to maximize event match quality metrics.</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feat-icon">&#128258;</div>
+                            <h3>Perfect Deduplication</h3>
+                            <p>Aligns event ID generation seeds between client-side pixel calls and server-side Graph triggers for ViewContent, AddToCart, and Checkout.</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feat-icon">&#128187;</div>
+                            <h3>Multi-Pixel CAPI Engines</h3>
+                            <p>Fires WooCommerce events concurrently to multiple Meta Graph pixel accounts, TikTok Events API v2, and Google Ads Enhanced conversions.</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feat-icon">&#128200;</div>
+                            <h3>Diagnostics Debug Console</h3>
+                            <p>Features live Server-Sent Events (SSE) diagnostic streams, local SQL logs, and a background retry queue with exponential back-off.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Price Comparison Section -->
+                <div class="landing-comparison" style="margin-top: 5rem; padding: 4rem 2rem; border-radius: 20px; background: rgba(255,255,255,0.01); border: 1px solid var(--border-color);">
+                    <h2 style="text-align:center; margin-bottom:1rem;">Stop Overpaying for Cloud Servers</h2>
+                    <p style="text-align:center; color:var(--text-muted); margin-bottom:3rem;">Why pay monthly fees to third-party containers when you can host it yourself?</p>
+                    
+                    <div style="max-width:800px; margin: 0 auto; overflow-x:auto;">
+                        <table class="data-table" style="background:transparent;">
+                            <thead>
+                                <tr>
+                                    <th>Tracking Tool</th>
+                                    <th>Host Location</th>
+                                    <th>Pricing Model</th>
+                                    <th>Your Cost</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Stape.io / GTM Containers</td>
+                                    <td>Third-Party Cloud Servers</td>
+                                    <td>Monthly Subscription (by volume)</td>
+                                    <td style="color:var(--danger); font-weight:600;">$20 - $120 / mo</td>
+                                </tr>
+                                <tr>
+                                    <td>Google Cloud Platform Tag Manager</td>
+                                    <td>Google Cloud Run instances</td>
+                                    <td>Standard GCP Resource Consumption</td>
+                                    <td style="color:var(--danger); font-weight:600;">$30 - $150 / mo</td>
+                                </tr>
+                                <tr style="background:rgba(99,102,241,0.05);">
+                                    <td><strong>Ratuls ACT</strong></td>
+                                    <td><strong>Local WordPress Server</strong></td>
+                                    <td><strong>100% Self-Hosted Open-Source</strong></td>
+                                    <td style="color:var(--success); font-weight:700; font-size:1.1rem;">$0 / Forever Free</td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
                 <?php
@@ -828,6 +1141,137 @@ if ($path === 'login') {
             display: flex;
             justify-content: space-between;
             align-items: center;
+        }
+
+        /* Landing Page Marketing Styles */
+        .landing-hero {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 4rem;
+            padding: 4rem 0;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        @media (max-width: 968px) {
+            .landing-hero {
+                flex-direction: column;
+                text-align: center;
+                gap: 3rem;
+                padding: 2rem 0;
+            }
+        }
+        .hero-left {
+            flex: 1.2;
+        }
+        .hero-left h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            line-height: 1.15;
+            margin: 1rem 0 1.5rem 0;
+            background: linear-gradient(135deg, #fff 50%, #818cf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .hero-left p {
+            font-size: 1.15rem;
+            line-height: 1.6;
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+        }
+        .badge-tag {
+            display: inline-block;
+            background: rgba(99, 102, 241, 0.15);
+            color: #a5b4fc;
+            padding: 0.35rem 0.9rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            border: 1px solid rgba(99, 102, 241, 0.25);
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+        .features-bullets {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+        @media (max-width: 968px) {
+            .features-bullets {
+                align-items: center;
+            }
+        }
+        .bullet {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.95rem;
+            color: var(--text-color);
+        }
+        .bullet-check {
+            color: var(--success);
+            font-weight: bold;
+            background: rgba(16, 185, 129, 0.1);
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+        }
+        .hero-right {
+            flex: 0.8;
+            width: 100%;
+            max-width: 450px;
+        }
+        .trial-card {
+            background: rgba(17, 24, 39, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 2.5rem;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            text-align: left;
+        }
+        .trial-card h3 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            text-align: center;
+        }
+        .trial-card .form-group {
+            margin-bottom: 1.25rem;
+        }
+        .landing-features {
+            padding: 6rem 0 2rem 0;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .landing-features h2 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            text-align: center;
+            background: linear-gradient(135deg, #fff, #9ca3af);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .feat-icon {
+            font-size: 2rem;
+            margin-bottom: 1.25rem;
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color);
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .landing-comparison {
+            max-width: 1200px;
+            margin: 4rem auto 0 auto;
         }
     </style>
     <!-- Site wide custom tracking scripts -->
