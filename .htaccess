@@ -1,0 +1,19 @@
+# CRXSM Main Routing Rule Configuration
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Prevent loop recursion
+    RewriteCond %{ENV:REDIRECT_STATUS} 200
+    RewriteRule .* - [L]
+
+    # Exclude setup installer, API tunnel, and Admin panel from front router rewriting
+    RewriteCond %{REQUEST_URI} ^/Setup/ [NC,OR]
+    RewriteCond %{REQUEST_URI} ^/Tunnel/ [NC,OR]
+    RewriteCond %{REQUEST_URI} ^/Back/ [NC]
+    RewriteRule .* - [L]
+
+    # Do not rewrite actual files or directories
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^(.*)$ Front/index.php [QSA,L]
+</IfModule>

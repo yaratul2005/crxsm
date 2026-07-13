@@ -1,0 +1,15 @@
+# Local configuration files
+Vault/config.php
+
+# Local software uploads (keep directory, ignore contents)
+Vault/uploads/*
+!Vault/uploads/.htaccess
+!Vault/uploads/index.html
+
+# IDE folders
+.idea/
+.vscode/
+
+# Local databases (if any stray files are created)
+*.sqlite
+*.db
