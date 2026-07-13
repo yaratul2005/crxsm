@@ -550,10 +550,12 @@ if ($path === 'login') {
                 $pageDescription = "Defeat Safari ITP & ad-blockers with a professional, first-party server-side Conversion API (CAPI) WordPress plugin by Yaser Ahmmed Ratul.";
                 ob_start();
                 ?>
-                <!-- Decorative Glow Backgrounds -->
-                <div class="glow-orb orb-1"></div>
-                <div class="glow-orb orb-2"></div>
-                <div class="grid-overlay"></div>
+                 <!-- Decorative Glow Backgrounds -->
+                 <div class="bg-glow-wrapper" style="position: absolute; inset: 0; overflow: hidden; z-index: -2; pointer-events: none;">
+                     <div class="glow-orb orb-1"></div>
+                     <div class="glow-orb orb-2"></div>
+                     <div class="grid-overlay"></div>
+                 </div>
 
                 <!-- Hero Section -->
                 <div class="landing-hero">
@@ -923,6 +925,7 @@ if ($path === 'login') {
             min-height: 100vh;
             display: flex;
             flex-direction: column;
+            overflow-x: hidden;
         }
 
         /* Header Navigation */
