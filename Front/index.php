@@ -546,84 +546,94 @@ if ($path === 'login') {
             // 3. Fallback: Default Front Page if empty path & no home page exists
             if (empty($path)) {
                 $pageTitle = "Ratuls ACT - Self-Hosted Ads Conversion Tracker";
-                $pageDescription = "A professional server-side CAPI tracking plugin for WordPress & WooCommerce that defeats Safari ITP and ad-blockers for free.";
+                $pageDescription = "Defeat Safari ITP & ad-blockers with a professional, first-party server-side Conversion API (CAPI) WordPress plugin by Yaser Ahmmed Ratul.";
                 ob_start();
                 ?>
-                <!-- Hero Section with Trial Form -->
+                <!-- Decorative Glow Backgrounds -->
+                <div class="glow-orb orb-1"></div>
+                <div class="glow-orb orb-2"></div>
+                <div class="grid-overlay"></div>
+
+                <!-- Hero Section -->
                 <div class="landing-hero">
                     <div class="hero-left">
-                        <span class="badge-tag">First-Party WooCommerce CAPI</span>
+                        <span class="badge-tag"><span class="badge-dot"></span> Professional WordPress CAPI</span>
                         <h1>Defeat Safari ITP & Reclaim 100% of Your Ad Conversions</h1>
                         <p>
-                            Stop wasting $20/month on third-party tag managers. <strong>Ratuls ACT</strong> is a self-hosted, server-side Conversion API (CAPI) gateway built directly inside WordPress to maximize your ad match quality and bypass blockers.
+                            Don't waste money on server-side tracking containers. <strong>Ratuls ACT</strong> (Ratul Ads Conversion Tracker) runs natively on your WordPress server as a self-hosted, First-Party CAPI Gateway to boost Event Match Quality (EMQ) automatically.
                         </p>
                         
                         <div class="features-bullets">
-                            <div class="bullet"><span class="bullet-check">&checkmark;</span> Extends Safari cookies to 2 years</div>
-                            <div class="bullet"><span class="bullet-check">&checkmark;</span> Bypasses ad-blockers natively</div>
-                            <div class="bullet"><span class="bullet-check">&checkmark;</span> Perfect 1-to-1 event deduplication</div>
+                            <div class="bullet"><span class="bullet-check">&checkmark;</span> <strong>Safari ITP Bypass:</strong> PHP set-cookie extends click IDs from 7 days to 2 years</div>
+                            <div class="bullet"><span class="bullet-check">&checkmark;</span> <strong>Ad-Blocker Resilience:</strong> Proxies events through a local REST endpoint</div>
+                            <div class="bullet"><span class="bullet-check">&checkmark;</span> <strong>Advanced Deduplication:</strong> Seeds browser & server event IDs 1-to-1</div>
+                        </div>
+
+                        <div style="margin-top: 2rem; display: flex; gap: 1rem; flex-wrap: wrap;">
+                            <a href="#trial-section" class="btn" style="max-width: 240px; box-shadow: 0 0 20px rgba(99, 102, 241, 0.4);">Claim Free Trial Key</a>
+                            <a href="https://github.com/yaratul2005/ServerTrack" target="_blank" rel="noopener noreferrer" class="btn btn-secondary" style="max-width: 200px;">GitHub Repo</a>
                         </div>
                     </div>
 
                     <div class="hero-right">
-                        <div class="trial-card">
-                            <h3>Claim 1-Year Free Trial</h3>
-                            <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:1.5rem; text-align:center;">
-                                Enter your details to verify your email and instantly claim your trial license key.
-                            </p>
-                            <form action="<?php echo $baseUrl; ?>/claim-trial" method="post">
-                                <?php echo Csrf::getHiddenInput(); ?>
-                                <div class="form-group" style="text-align:left;">
-                                    <label class="form-label" style="font-size:0.75rem;">Your Name</label>
-                                    <input type="text" name="name" required placeholder="e.g. Yaser Ratul">
-                                </div>
-                                <div class="form-group" style="text-align:left;">
-                                    <label class="form-label" style="font-size:0.75rem;">Email Address</label>
-                                    <input type="email" name="email" required placeholder="e.g. ratul@great10.xyz">
-                                </div>
-                                <button type="submit" class="btn" style="padding:0.9rem; font-size:0.95rem;">Claim Free Trial Key</button>
-                            </form>
-                            <span style="font-size:0.7rem; color:var(--text-muted); display:block; margin-top:1rem; text-align:center;">
-                                *No credit card required. Includes version updates for 1 year.
-                            </span>
+                        <div class="code-window">
+                            <div class="code-window-header">
+                                <span class="dot red"></span>
+                                <span class="dot yellow"></span>
+                                <span class="dot green"></span>
+                                <span class="title">class-ratuls-act.php</span>
+                            </div>
+                            <pre class="code-window-body"><code><span class="keyword">class</span> <span class="classname">RatulsACT_Tracker</span> {
+  <span class="keyword">private</span> <span class="variable">$first_party</span> = <span class="keyword">true</span>;
+  <span class="keyword">private</span> <span class="variable">$cookie_lifespan</span> = <span class="string">'2_years'</span>;
+
+  <span class="keyword">public</span> <span class="keyword">function</span> <span class="classname">dispatch_to_capi</span>(<span class="variable">$event</span>) {
+    <span class="keyword">return</span> <span class="variable">$this</span>->enrich_payload(<span class="variable">$event</span>)
+      ->stitch_identity()
+      ->deduplicate_events()
+      ->push_async();
+  }
+}
+<span class="comment">// Self-hosted $0 monthly tracking gateway</span></code></pre>
                         </div>
                     </div>
                 </div>
 
                 <!-- Product Features Grid -->
                 <div class="landing-features">
+                    <span class="badge-tag" style="margin: 0 auto 1rem auto; display: table;">Robust Architecture</span>
                     <h2>Advanced Server-Side Tracking Mechanics</h2>
                     <p style="text-align:center; color:var(--text-muted); max-width:600px; margin: 0.5rem auto 3rem auto;">
-                        Architected natively in PHP to bypass browser privacy rules and deliver high Event Match Quality (EMQ) directly to ad networks.
+                        Designed to bypass browser privacy rules, extend cookie lifespans, and deliver high Event Match Quality (EMQ) directly to Meta, TikTok, and Google.
                     </p>
                     
                     <div class="features-grid">
-                        <div class="feature-card">
+                        <div class="feature-card glow-base">
                             <div class="feat-icon">&#128711;</div>
                             <h3>ITP Bypass (2-Year Cookies)</h3>
-                            <p>Generates first-party Set-Cookie headers via server-side PHP, expanding ad click identifier lifespans (fbclid, gclid) from the JS-capped 7 days to a full 2 years.</p>
+                            <p>Generates secure first-party HTTP headers via PHP, extending click identifiers (fbclid, gclid) from the JS-capped 7 days to a full 2 years.</p>
                         </div>
-                        <div class="feature-card">
+                        <div class="feature-card glow-base">
                             <div class="feat-icon">&#128737;</div>
                             <h3>Ad-blocker Resiliency</h3>
-                            <p>Bypasses browser-level content blockers by routing conversions through local site endpoints (/wp-json/ratul-ads-conversion-tracker/v1/pixel).</p>
+                            <p>Bypasses browser blockers entirely by proxying tracking events through local WordPress REST endpoints.</p>
                         </div>
-                        <div class="feature-card">
+                        <div class="feature-card glow-base">
                             <div class="feat-icon">&#128100;</div>
                             <h3>Deep Identity Stitching</h3>
-                            <p>Stitches MaxMind GeoIP resolution, Sucuri/Cloudflare real IP extraction, and browser user-agents to maximize event match quality metrics.</p>
+                            <p>Bundles MaxMind GeoIP resolution, true client IP detection across proxies, and user-agent matching to boost match quality.</p>
                         </div>
-                        <div class="feature-card">
+                        <div class="feature-card glow-base">
                             <div class="feat-icon">&#128258;</div>
                             <h3>Perfect Deduplication</h3>
-                            <p>Aligns event ID generation seeds between client-side pixel calls and server-side Graph triggers for ViewContent, AddToCart, and Checkout.</p>
+                            <p>Aligns browser pixel event ID seeds with server-side Graph API triggers to avoid double-counting conversion events.</p>
                         </div>
-                        <div class="feature-card">
+                        <div class="feature-card glow-base">
                             <div class="feat-icon">&#128187;</div>
-                            <h3>Multi-Pixel CAPI Engines</h3>
+                            <h3>Multi-Pixel Engines</h3>
                             <p>Fires WooCommerce events concurrently to multiple Meta Graph pixel accounts, TikTok Events API v2, and Google Ads Enhanced conversions.</p>
                         </div>
-                        <div class="feature-card">
+                        <div class="feature-card glow-base">
                             <div class="feat-icon">&#128200;</div>
                             <h3>Diagnostics Debug Console</h3>
                             <p>Features live Server-Sent Events (SSE) diagnostic streams, local SQL logs, and a background retry queue with exponential back-off.</p>
@@ -631,13 +641,43 @@ if ($path === 'login') {
                     </div>
                 </div>
 
+                <!-- Meet The Creator Section -->
+                <div class="creator-section">
+                    <div class="creator-container">
+                        <div class="creator-photo">
+                            <div class="photo-glow-border">
+                                <img src="https://yaratul.com/media/yar.jpeg" alt="Yaser Ahmmed Ratul">
+                            </div>
+                        </div>
+                        <div class="creator-details">
+                            <span class="badge-tag">Meet the Inventor</span>
+                            <h2>Yaser Ahmmed Ratul</h2>
+                            <p class="creator-subtitle">Full-Stack Developer, DevOps & SEO Specialist</p>
+                            <div class="creator-bio">
+                                <p>
+                                    "I invented this tracking system to replace expensive third-party container services that charge digital marketers $20-$120 a month for simple data loopbacks. Ratuls ACT runs directly on your own WordPress hosting server, giving you full data control with zero monthly cost."
+                                </p>
+                                <p style="margin-top: 1rem; color: var(--text-color);">
+                                    Yaser is a Google-Certified AI Professional, WordPress Core Optimizer, and DevOps Engineer based in Cumilla, Bangladesh. He built this system to democratize high-match-quality tracking for digital marketers worldwide.
+                                </p>
+                            </div>
+                            <div style="margin-top: 1.5rem;">
+                                <a href="https://yaratul.com" target="_blank" rel="noopener noreferrer" class="btn btn-secondary" style="max-width: 220px; display: inline-flex; align-items: center; gap: 0.5rem;">
+                                    Visit Official Portfolio
+                                    <span style="font-size: 0.8rem;">&#8599;</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Price Comparison Section -->
-                <div class="landing-comparison" style="margin-top: 5rem; padding: 4rem 2rem; border-radius: 20px; background: rgba(255,255,255,0.01); border: 1px solid var(--border-color);">
+                <div class="landing-comparison">
                     <h2 style="text-align:center; margin-bottom:1rem;">Stop Overpaying for Cloud Servers</h2>
                     <p style="text-align:center; color:var(--text-muted); margin-bottom:3rem;">Why pay monthly fees to third-party containers when you can host it yourself?</p>
                     
-                    <div style="max-width:800px; margin: 0 auto; overflow-x:auto;">
-                        <table class="data-table" style="background:transparent;">
+                    <div style="overflow-x:auto;">
+                        <table class="compare-table">
                             <thead>
                                 <tr>
                                     <th>Tracking Tool</th>
@@ -659,14 +699,43 @@ if ($path === 'login') {
                                     <td>Standard GCP Resource Consumption</td>
                                     <td style="color:var(--danger); font-weight:600;">$30 - $150 / mo</td>
                                 </tr>
-                                <tr style="background:rgba(99,102,241,0.05);">
-                                    <td><strong>Ratuls ACT</strong></td>
+                                <tr class="active-row">
+                                    <td><strong>Ratuls ACT (Self-Hosted)</strong></td>
                                     <td><strong>Local WordPress Server</strong></td>
                                     <td><strong>100% Self-Hosted Open-Source</strong></td>
-                                    <td style="color:var(--success); font-weight:700; font-size:1.1rem;">$0 / Forever Free</td>
+                                    <td style="color:var(--success); font-weight:800; font-size:1.15rem;">$0 / Forever Free</td>
                                 </tr>
                             </tbody>
                         </table>
+                    </div>
+                </div>
+
+                <!-- Lead Trial Capture Form Section -->
+                <div id="trial-section" style="padding: 6rem 0 2rem 0; text-align: center; max-width: 600px; margin: 0 auto;">
+                    <span class="badge-tag" style="margin-bottom: 1rem;">Instant Onboarding</span>
+                    <h2>Claim Your 1-Year Free License Key</h2>
+                    <p style="color: var(--text-muted); margin: 0.5rem 0 2.5rem 0; font-size: 0.95rem;">
+                        Verify your email address to automatically register a customer dashboard account and receive your signed Ed25519 license token.
+                    </p>
+                    
+                    <div class="trial-card glow-base" style="margin-top: 1rem;">
+                        <form action="<?php echo $baseUrl; ?>/claim-trial" method="post">
+                            <?php echo Csrf::getHiddenInput(); ?>
+                            <div class="form-group">
+                                <label class="form-label">Your Name</label>
+                                <input type="text" name="name" required placeholder="e.g. Yaser Ratul">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Email Address</label>
+                                <input type="email" name="email" required placeholder="e.g. owner@yaratul.com">
+                            </div>
+                            <button type="submit" class="btn" style="padding: 1rem; font-size: 1rem; margin-top: 1rem; font-weight: 700; box-shadow: 0 4px 20px rgba(99,102,241,0.3);">
+                                Send Verification Link
+                            </button>
+                        </form>
+                        <span style="font-size:0.75rem; color:var(--text-muted); display:block; margin-top:1.25rem;">
+                            *No credit card required. Free updates and secure zip file downloads included.
+                        </span>
                     </div>
                 </div>
                 <?php
@@ -1143,58 +1212,114 @@ if ($path === 'login') {
             align-items: center;
         }
 
+        /* Decorative Background elements */
+        .glow-orb {
+            position: absolute;
+            width: 350px;
+            height: 350px;
+            border-radius: 50%;
+            filter: blur(80px);
+            z-index: -2;
+            pointer-events: none;
+            opacity: 0.15;
+            animation: float-orb 15s infinite alternate ease-in-out;
+        }
+        .orb-1 {
+            background: #6366f1;
+            top: 15%;
+            left: -10%;
+        }
+        .orb-2 {
+            background: #8b5cf6;
+            bottom: 20%;
+            right: -10%;
+            animation-delay: -5s;
+        }
+        @keyframes float-orb {
+            0% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-40px) scale(1.1); }
+            100% { transform: translateY(0) scale(1); }
+        }
+        .grid-overlay {
+            position: absolute;
+            inset: 0;
+            background-image: 
+                linear-gradient(rgba(255, 255, 255, 0.007) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.007) 1px, transparent 1px);
+            background-size: 50px 50px;
+            pointer-events: none;
+            z-index: -1;
+        }
+
         /* Landing Page Marketing Styles */
         .landing-hero {
             display: flex;
             align-items: center;
             justify-content: space-between;
             gap: 4rem;
-            padding: 4rem 0;
+            padding: 6rem 0;
             max-width: 1200px;
             margin: 0 auto;
+            position: relative;
         }
         @media (max-width: 968px) {
             .landing-hero {
                 flex-direction: column;
                 text-align: center;
                 gap: 3rem;
-                padding: 2rem 0;
+                padding: 3rem 1rem;
             }
         }
         .hero-left {
             flex: 1.2;
         }
         .hero-left h1 {
-            font-size: 3rem;
+            font-size: 3.5rem;
             font-weight: 800;
             line-height: 1.15;
-            margin: 1rem 0 1.5rem 0;
-            background: linear-gradient(135deg, #fff 50%, #818cf8);
+            margin: 1.2rem 0 1.5rem 0;
+            background: linear-gradient(135deg, #fff 40%, #818cf8);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            letter-spacing: -0.02em;
+        }
+        @media (max-width: 768px) {
+            .hero-left h1 {
+                font-size: 2.5rem;
+            }
         }
         .hero-left p {
-            font-size: 1.15rem;
-            line-height: 1.6;
+            font-size: 1.2rem;
+            line-height: 1.7;
             color: var(--text-muted);
-            margin-bottom: 2rem;
+            margin-bottom: 2.2rem;
         }
         .badge-tag {
-            display: inline-block;
-            background: rgba(99, 102, 241, 0.15);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(99, 102, 241, 0.12);
             color: #a5b4fc;
-            padding: 0.35rem 0.9rem;
+            padding: 0.4rem 1rem;
             border-radius: 50px;
             font-size: 0.8rem;
             font-weight: 600;
-            border: 1px solid rgba(99, 102, 241, 0.25);
+            border: 1px solid rgba(99, 102, 241, 0.2);
             letter-spacing: 0.05em;
             text-transform: uppercase;
+        }
+        .badge-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--success);
+            border-radius: 50%;
+            display: inline-block;
+            box-shadow: 0 0 8px var(--success);
         }
         .features-bullets {
             display: flex;
             flex-direction: column;
-            gap: 0.75rem;
+            gap: 1rem;
         }
         @media (max-width: 968px) {
             .features-bullets {
@@ -1205,73 +1330,298 @@ if ($path === 'login') {
             display: flex;
             align-items: center;
             gap: 0.75rem;
-            font-size: 0.95rem;
+            font-size: 1rem;
             color: var(--text-color);
         }
         .bullet-check {
             color: var(--success);
             font-weight: bold;
             background: rgba(16, 185, 129, 0.1);
-            width: 20px;
-            height: 20px;
+            width: 22px;
+            height: 22px;
             border-radius: 50%;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            font-size: 0.75rem;
+            font-size: 0.8rem;
+            border: 1px solid rgba(16, 185, 129, 0.2);
         }
         .hero-right {
             flex: 0.8;
             width: 100%;
-            max-width: 450px;
+            max-width: 480px;
         }
-        .trial-card {
-            background: rgba(17, 24, 39, 0.6);
+
+        /* Glassmorphic Code Window */
+        .code-window {
+            background: rgba(17, 24, 39, 0.55);
             border: 1px solid rgba(255, 255, 255, 0.08);
-            backdrop-filter: blur(20px);
-            border-radius: 20px;
-            padding: 2.5rem;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            border-radius: 16px;
+            backdrop-filter: blur(24px);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+            overflow: hidden;
             text-align: left;
+            transition: transform 0.3s;
         }
-        .trial-card h3 {
-            font-size: 1.4rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-            text-align: center;
+        .code-window:hover {
+            transform: translateY(-5px);
         }
-        .trial-card .form-group {
-            margin-bottom: 1.25rem;
+        .code-window-header {
+            background: rgba(255, 255, 255, 0.02);
+            padding: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
+        .code-window-header .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        .code-window-header .dot.red { background: #ef4444; }
+        .code-window-header .dot.yellow { background: #f59e0b; }
+        .code-window-header .dot.green { background: #10b981; }
+        .code-window-header .title {
+            margin-left: auto;
+            font-size: 0.75rem;
+            font-family: monospace;
+            color: var(--text-muted);
+        }
+        .code-window-body {
+            padding: 1.5rem;
+            font-family: monospace;
+            font-size: 0.85rem;
+            line-height: 1.6;
+            margin: 0;
+            overflow-x: auto;
+        }
+        .code-window-body .keyword { color: #f43f5e; }
+        .code-window-body .classname { color: #38bdf8; }
+        .code-window-body .variable { color: #a5b4fc; }
+        .code-window-body .string { color: #10b981; }
+        .code-window-body .comment { color: #6b7280; font-style: italic; }
+
+        /* Feature Section & Cards */
         .landing-features {
-            padding: 6rem 0 2rem 0;
+            padding: 6rem 0;
             max-width: 1200px;
             margin: 0 auto;
         }
         .landing-features h2 {
-            font-size: 2.2rem;
-            font-weight: 700;
+            font-size: 2.5rem;
+            font-weight: 800;
             text-align: center;
+            margin: 1rem 0;
             background: linear-gradient(135deg, #fff, #9ca3af);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
+        .glow-base {
+            position: relative;
+            z-index: 1;
+        }
+        .glow-base::before {
+            content: '';
+            position: absolute;
+            inset: -1px;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.3), rgba(139, 92, 246, 0.1));
+            border-radius: 16px;
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .glow-base:hover::before {
+            opacity: 1;
+        }
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+        .feature-card {
+            background: rgba(17, 24, 39, 0.45);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(12px);
+            border-radius: 16px;
+            padding: 2.5rem 2rem;
+            transition: transform 0.3s, border-color 0.3s;
+        }
+        .feature-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(99, 102, 241, 0.2);
+        }
         .feat-icon {
-            font-size: 2rem;
-            margin-bottom: 1.25rem;
-            display: inline-block;
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid var(--border-color);
-            width: 50px;
-            height: 50px;
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            width: 48px;
+            height: 48px;
             border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
+            color: #a5b4fc;
         }
+        .feature-card h3 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+        }
+        .feature-card p {
+            color: var(--text-muted);
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+
+        /* Creator Section Bio */
+        .creator-section {
+            padding: 6rem 0;
+            max-width: 1200px;
+            margin: 0 auto;
+            border-top: 1px solid rgba(255,255,255,0.04);
+        }
+        .creator-container {
+            display: flex;
+            align-items: center;
+            gap: 5rem;
+            background: rgba(17, 24, 39, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 24px;
+            padding: 4rem;
+            backdrop-filter: blur(12px);
+        }
+        @media (max-width: 968px) {
+            .creator-container {
+                flex-direction: column;
+                padding: 2.5rem;
+                gap: 3rem;
+                text-align: center;
+            }
+        }
+        .creator-photo {
+            flex: 0.8;
+            display: flex;
+            justify-content: center;
+        }
+        .photo-glow-border {
+            position: relative;
+            padding: 6px;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.5), rgba(139, 92, 246, 0.2));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .creator-photo img {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid var(--bg-color);
+        }
+        .creator-details {
+            flex: 1.2;
+        }
+        .creator-details h2 {
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin-top: 0.75rem;
+        }
+        .creator-subtitle {
+            color: #a5b4fc;
+            font-weight: 500;
+            margin-bottom: 1.5rem;
+            font-size: 1.05rem;
+        }
+        .creator-bio {
+            line-height: 1.7;
+            color: var(--text-muted);
+            font-size: 1rem;
+        }
+        .creator-bio p {
+            font-style: italic;
+        }
+
+        /* Pricing & Compare Tables */
         .landing-comparison {
             max-width: 1200px;
-            margin: 4rem auto 0 auto;
+            margin: 6rem auto;
+            padding: 0 1rem;
+        }
+        .landing-comparison h2 {
+            font-size: 2.5rem;
+            font-weight: 800;
+        }
+        .compare-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 3rem;
+            background: rgba(17, 24, 39, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            overflow: hidden;
+            text-align: left;
+        }
+        .compare-table th, .compare-table td {
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            font-size: 0.95rem;
+        }
+        .compare-table th {
+            background: rgba(255, 255, 255, 0.02);
+            color: #fff;
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .compare-table tr:last-child td {
+            border-bottom: none;
+        }
+        .compare-table tr.active-row {
+            background: rgba(99, 102, 241, 0.06);
+        }
+        .compare-table tr.active-row td {
+            border-bottom: 1px solid rgba(99, 102, 241, 0.15);
+            color: #fff;
+        }
+        @media (max-width: 768px) {
+            .compare-table th, .compare-table td {
+                padding: 1rem 1.2rem;
+                font-size: 0.85rem;
+            }
+        }
+
+        /* Trial Form styling updates */
+        .trial-card {
+            background: rgba(17, 24, 39, 0.55);
+            border: 1px solid rgba(255, 255, 255, 0.07);
+            border-radius: 20px;
+            padding: 3rem;
+            box-shadow: 0 20px 45px rgba(0, 0, 0, 0.35);
+            backdrop-filter: blur(24px);
+        }
+        .trial-card form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+        .trial-card .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            text-align: left;
+        }
+        .trial-card .form-label {
+            font-weight: 500;
+            color: var(--text-color);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
     </style>
     <!-- Site wide custom tracking scripts -->
