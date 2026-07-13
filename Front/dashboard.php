@@ -172,10 +172,10 @@ $licenses = DB::fetchAll(
                                         <tbody>
                                             <?php foreach ($activations as $act): ?>
                                                 <tr>
-                                                    <td><code><?php echo htmlspecialchars($act['domain']); ?></code></td>
-                                                    <td><span class="machine-id-badge" title="<?php echo htmlspecialchars($act['machine_id']); ?>"><?php echo htmlspecialchars(substr($act['machine_id'], 0, 10)); ?>...</span></td>
-                                                    <td><?php echo date('M d, H:i', strtotime($act['last_active_at'])); ?></td>
-                                                    <td>
+                                                    <td data-label="Domain"><code><?php echo htmlspecialchars($act['domain']); ?></code></td>
+                                                    <td data-label="Machine ID"><span class="machine-id-badge" title="<?php echo htmlspecialchars($act['machine_id']); ?>"><?php echo htmlspecialchars(substr($act['machine_id'], 0, 10)); ?>...</span></td>
+                                                    <td data-label="Last Active"><?php echo date('M d, H:i', strtotime($act['last_active_at'])); ?></td>
+                                                    <td data-label="Action">
                                                         <form action="<?php echo $baseUrl; ?>/dashboard" method="post" onsubmit="return confirm('Deactivating this slot will disable licensing on the remote site. Proceed?');" style="display:inline;">
                                                             <?php echo Csrf::getHiddenInput(); ?>
                                                             <input type="hidden" name="action" value="deactivate">
@@ -363,6 +363,87 @@ $licenses = DB::fetchAll(
             flex-direction: column;
             align-items: flex-start;
             gap: 0.4rem;
+        }
+        
+        .license-card {
+            padding: 1.5rem;
+        }
+        
+        /* Stack activations table on mobile */
+        .activations-table, 
+        .activations-table thead, 
+        .activations-table tbody, 
+        .activations-table th, 
+        .activations-table td, 
+        .activations-table tr {
+            display: block;
+            width: 100%;
+        }
+        .activations-table thead {
+            display: none;
+        }
+        .activations-table tr {
+            margin-bottom: 1.25rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            background: rgba(0, 0, 0, 0.15);
+        }
+        .activations-table td {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.6rem 0;
+            border-bottom: 1px dashed rgba(255,255,255,0.04);
+            text-align: right;
+        }
+        .activations-table td:last-child {
+            border-bottom: none;
+        }
+        .activations-table td::before {
+            content: attr(data-label);
+            font-weight: 600;
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            float: left;
+            text-align: left;
+        }
+        
+        /* Stack version downloads list on mobile */
+        .version-list li {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 1rem;
+            text-align: center;
+            padding: 1rem;
+        }
+        .version-info {
+            align-items: center;
+        }
+        .btn-download {
+            text-align: center;
+            width: 100%;
+        }
+        
+        /* Adjust key container wrap */
+        .key-container {
+            flex-direction: column;
+            gap: 0.75rem;
+            align-items: stretch;
+            width: 100%;
+        }
+        .key-container code {
+            max-width: 100%;
+            text-align: center;
+            white-space: normal;
+            word-break: break-all;
+        }
+        .btn-copy {
+            padding: 0.5rem;
+            text-align: center;
+            border-top: 1px solid var(--border-color);
+            margin-top: 0.25rem;
         }
     }
 

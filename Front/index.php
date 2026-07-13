@@ -876,6 +876,26 @@ if ($path === 'login') {
             justify-content: center;
         }
 
+        @media (max-width: 768px) {
+            .nav-container {
+                flex-direction: column;
+                gap: 1rem;
+                padding: 1rem;
+            }
+            .nav-links {
+                gap: 1.25rem;
+                flex-wrap: wrap;
+                justify-content: center;
+                width: 100%;
+            }
+            main.main-content {
+                padding: 2rem 1rem;
+            }
+            .auth-card {
+                padding: 2rem 1.5rem;
+            }
+        }
+
         /* Glassmorphic Form Card */
         .auth-card {
             background: var(--card-bg);
