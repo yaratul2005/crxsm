@@ -689,7 +689,7 @@ if ($path === 'login') {
                     <h2 style="text-align:center; margin-bottom:1rem;">Stop Overpaying for Cloud Servers</h2>
                     <p style="text-align:center; color:var(--text-muted); margin-bottom:3rem;">Why pay monthly fees to third-party containers when you can host it yourself?</p>
                     
-                    <div style="overflow-x:auto;">
+                    <div style="width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch;">
                         <table class="compare-table">
                             <thead>
                                 <tr>
@@ -1496,6 +1496,12 @@ if ($path === 'login') {
             flex: 0.8;
             width: 100%;
             max-width: 480px;
+            box-sizing: border-box;
+        }
+        @media (max-width: 480px) {
+            .hero-right {
+                max-width: 100%;
+            }
         }
 
         /* Glassmorphic Code Window */
@@ -1508,6 +1514,9 @@ if ($path === 'login') {
             overflow: hidden;
             text-align: left;
             transition: transform 0.3s;
+            width: 100%;
+            max-width: 100%;
+            box-sizing: border-box;
         }
         .code-window:hover {
             transform: translateY(-5px);
@@ -1711,6 +1720,7 @@ if ($path === 'login') {
             border-radius: 16px;
             overflow: hidden;
             text-align: left;
+            min-width: 600px;
         }
         .compare-table th, .compare-table td {
             padding: 1.5rem 2rem;
