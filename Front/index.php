@@ -609,32 +609,44 @@ if ($path === 'login') {
                     
                     <div class="features-grid">
                         <div class="feature-card glow-base">
-                            <div class="feat-icon">&#128711;</div>
+                            <div class="feat-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 11l2 2 4-4"/></svg>
+                            </div>
                             <h3>ITP Bypass (2-Year Cookies)</h3>
                             <p>Generates secure first-party HTTP headers via PHP, extending click identifiers (fbclid, gclid) from the JS-capped 7 days to a full 2 years.</p>
                         </div>
                         <div class="feature-card glow-base">
-                            <div class="feat-icon">&#128737;</div>
+                            <div class="feat-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                            </div>
                             <h3>Ad-blocker Resiliency</h3>
                             <p>Bypasses browser blockers entirely by proxying tracking events through local WordPress REST endpoints.</p>
                         </div>
                         <div class="feature-card glow-base">
-                            <div class="feat-icon">&#128100;</div>
+                            <div class="feat-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                            </div>
                             <h3>Deep Identity Stitching</h3>
                             <p>Bundles MaxMind GeoIP resolution, true client IP detection across proxies, and user-agent matching to boost match quality.</p>
                         </div>
                         <div class="feature-card glow-base">
-                            <div class="feat-icon">&#128258;</div>
+                            <div class="feat-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3h5v5M8 21H3v-5M12 3a9 9 0 0 1 9 9M12 21a9 9 0 0 1-9-9"/></svg>
+                            </div>
                             <h3>Perfect Deduplication</h3>
                             <p>Aligns browser pixel event ID seeds with server-side Graph API triggers to avoid double-counting conversion events.</p>
                         </div>
                         <div class="feature-card glow-base">
-                            <div class="feat-icon">&#128187;</div>
+                            <div class="feat-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                            </div>
                             <h3>Multi-Pixel Engines</h3>
                             <p>Fires WooCommerce events concurrently to multiple Meta Graph pixel accounts, TikTok Events API v2, and Google Ads Enhanced conversions.</p>
                         </div>
                         <div class="feature-card glow-base">
-                            <div class="feat-icon">&#128200;</div>
+                            <div class="feat-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                            </div>
                             <h3>Diagnostics Debug Console</h3>
                             <p>Features live Server-Sent Events (SSE) diagnostic streams, local SQL logs, and a background retry queue with exponential back-off.</p>
                         </div>
@@ -1633,7 +1645,7 @@ if ($path === 'login') {
 
 <header class="site-nav">
     <div class="nav-container">
-        <a href="<?php echo $baseUrl; ?>" class="nav-logo">CR<span>XSM</span></a>
+        <a href="<?php echo $baseUrl; ?>" class="nav-logo"><?php echo htmlspecialchars($siteName); ?></a>
         <nav class="nav-links">
             <a href="<?php echo $baseUrl; ?>">Home</a>
             <?php if (Auth::isCustomerLoggedIn()): ?>
@@ -1654,7 +1666,7 @@ if ($path === 'login') {
 <footer class="site-footer">
     <div class="footer-container">
         <div class="footer-col">
-            <div class="footer-logo">CR<span>XSM</span></div>
+            <div class="footer-logo"><?php echo htmlspecialchars($siteName); ?></div>
             <div class="footer-text">
                 <?php echo $footerZone1; ?>
             </div>
