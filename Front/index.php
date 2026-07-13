@@ -565,9 +565,18 @@ if ($path === 'login') {
                         </p>
                         
                         <div class="features-bullets">
-                            <div class="bullet"><span class="bullet-check">&checkmark;</span> <strong>Safari ITP Bypass:</strong> PHP set-cookie extends click IDs from 7 days to 2 years</div>
-                            <div class="bullet"><span class="bullet-check">&checkmark;</span> <strong>Ad-Blocker Resilience:</strong> Proxies events through a local REST endpoint</div>
-                            <div class="bullet"><span class="bullet-check">&checkmark;</span> <strong>Advanced Deduplication:</strong> Seeds browser & server event IDs 1-to-1</div>
+                            <div class="bullet">
+                                <span class="bullet-check">&checkmark;</span>
+                                <span><strong>Safari ITP Bypass:</strong> PHP set-cookie extends click IDs from 7 days to 2 years</span>
+                            </div>
+                            <div class="bullet">
+                                <span class="bullet-check">&checkmark;</span>
+                                <span><strong>Ad-Blocker Resilience:</strong> Proxies events through a local REST endpoint</span>
+                            </div>
+                            <div class="bullet">
+                                <span class="bullet-check">&checkmark;</span>
+                                <span><strong>Advanced Deduplication:</strong> Seeds browser & server event IDs 1-to-1</span>
+                            </div>
                         </div>
 
                         <div style="margin-top: 2rem; display: flex; gap: 1rem; flex-wrap: wrap;">
@@ -1403,10 +1412,12 @@ if ($path === 'login') {
             align-items: center;
             justify-content: space-between;
             gap: 4rem;
-            padding: 6rem 0;
+            padding: 6rem 1.5rem;
             max-width: 1200px;
             margin: 0 auto;
             position: relative;
+            width: 100%;
+            box-sizing: border-box;
         }
         @media (max-width: 968px) {
             .landing-hero {
@@ -1474,10 +1485,14 @@ if ($path === 'login') {
         }
         .bullet {
             display: flex;
-            align-items: center;
+            align-items: flex-start;
             gap: 0.75rem;
             font-size: 1rem;
             color: var(--text-color);
+            text-align: left;
+        }
+        .bullet span:last-child {
+            line-height: 1.4;
         }
         .bullet-check {
             color: var(--success);
@@ -1560,9 +1575,16 @@ if ($path === 'login') {
 
         /* Feature Section & Cards */
         .landing-features {
-            padding: 6rem 0;
+            padding: 6rem 1.5rem;
             max-width: 1200px;
             margin: 0 auto;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        @media (max-width: 768px) {
+            .landing-features {
+                padding: 3rem 1rem;
+            }
         }
         .landing-features h2 {
             font-size: 2.5rem;
@@ -1634,10 +1656,17 @@ if ($path === 'login') {
 
         /* Creator Section Bio */
         .creator-section {
-            padding: 6rem 0;
+            padding: 6rem 1.5rem;
             max-width: 1200px;
             margin: 0 auto;
+            width: 100%;
+            box-sizing: border-box;
             border-top: 1px solid rgba(255,255,255,0.04);
+        }
+        @media (max-width: 768px) {
+            .creator-section {
+                padding: 3rem 1rem;
+            }
         }
         .creator-container {
             display: flex;
@@ -1705,7 +1734,15 @@ if ($path === 'login') {
         .landing-comparison {
             max-width: 1200px;
             margin: 6rem auto;
-            padding: 0 1rem;
+            padding: 0 1.5rem;
+            width: 100%;
+            box-sizing: border-box;
+            overflow: hidden;
+        }
+        @media (max-width: 768px) {
+            .landing-comparison {
+                padding: 3rem 1rem;
+            }
         }
         .landing-comparison h2 {
             font-size: 2.5rem;
