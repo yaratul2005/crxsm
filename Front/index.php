@@ -1944,6 +1944,16 @@ if ($path === 'login') {
             display: flex;
             gap: 1.5rem;
             z-index: 10;
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(10px);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .deck-container:hover .deck-controls {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translateY(0);
         }
 
         .deck-btn {
@@ -2358,6 +2368,7 @@ if ($path === 'login') {
 
 <script>
 let currentSlideIndex = 0;
+let autoPlayTimer = null;
 
 function updateDeck() {
     const slides = document.querySelectorAll('.deck-slide');
@@ -2380,18 +2391,24 @@ function updateDeck() {
     });
 }
 
-function nextSlide() {
+function nextSlide(isManual = false) {
     const slides = document.querySelectorAll('.deck-slide');
     if (slides.length === 0) return;
     currentSlideIndex = (currentSlideIndex + 1) % slides.length;
     updateDeck();
+    if (isManual) {
+        resetAutoPlay();
+    }
 }
 
-function prevSlide() {
+function prevSlide(isManual = false) {
     const slides = document.querySelectorAll('.deck-slide');
     if (slides.length === 0) return;
     currentSlideIndex = (currentSlideIndex - 1 + slides.length) % slides.length;
     updateDeck();
+    if (isManual) {
+        resetAutoPlay();
+    }
 }
 
 function clickSlide(index) {
@@ -2400,15 +2417,40 @@ function clickSlide(index) {
     if (total === 0) return;
     const offset = (index - currentSlideIndex + total) % total;
     if (offset === 1) {
-        nextSlide();
+        nextSlide(true);
     } else if (offset === total - 1) {
-        prevSlide();
+        prevSlide(true);
     }
+}
+
+function startAutoPlay() {
+    clearInterval(autoPlayTimer);
+    autoPlayTimer = setInterval(function() {
+        nextSlide(false);
+    }, 3800);
+}
+
+function resetAutoPlay() {
+    startAutoPlay();
 }
 
 document.addEventListener('DOMContentLoaded', function() {
     // Initialize 3D deck position
     updateDeck();
+    
+    // Start automated sliding
+    startAutoPlay();
+
+    // Pause autoplay on mouse enter, resume on mouse leave
+    const container = document.querySelector('.deck-container');
+    if (container) {
+        container.addEventListener('mouseenter', function() {
+            clearInterval(autoPlayTimer);
+        });
+        container.addEventListener('mouseleave', function() {
+            startAutoPlay();
+        });
+    }
 
     // Intercept form submissions to show the fluid button loading state
     const forms = document.querySelectorAll('form.fluid-form, .auth-card form');
