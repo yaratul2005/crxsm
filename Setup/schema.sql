@@ -160,3 +160,29 @@ CREATE TABLE `api_rate_limits` (
   `window_start` INT NOT NULL, -- Unix timestamp of window start
   UNIQUE KEY `unique_client_window` (`client_id`, `window_start`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- 13. Support Tickets Table
+CREATE TABLE `support_tickets` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `ticket_token` VARCHAR(32) UNIQUE NOT NULL,
+  `user_id` INT NULL,
+  `name` VARCHAR(100) NOT NULL,
+  `email` VARCHAR(150) NOT NULL,
+  `subject` VARCHAR(250) NOT NULL,
+  `status` ENUM('open', 'pending', 'resolved', 'closed') NOT NULL DEFAULT 'open',
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  INDEX (`ticket_token`),
+  INDEX (`email`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- 14. Ticket Messages Table
+CREATE TABLE `ticket_messages` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `ticket_id` INT NOT NULL,
+  `sender_type` ENUM('customer', 'admin') NOT NULL,
+  `sender_name` VARCHAR(100) NOT NULL,
+  `message` TEXT NOT NULL,
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (`ticket_id`) REFERENCES `support_tickets` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

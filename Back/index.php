@@ -24,6 +24,7 @@ use Vault\Auth;
 use Vault\Crypto;
 use Vault\Csrf;
 use Vault\Audit;
+use Vault\Captcha;
 
 // Start session
 Auth::startSession();
@@ -51,17 +52,22 @@ function getSettingVal(string $key, string $default = ''): string {
 if (!Auth::isAdminLoggedIn()) {
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         Csrf::verifyOrDie();
-        $username = trim($_POST['username'] ?? '');
-        $password = $_POST['password'] ?? '';
         
-        $admin = DB::fetch("SELECT * FROM admins WHERE username = :username", [':username' => $username]);
-        if ($admin && password_verify($password, $admin['password'])) {
-            Auth::loginAdmin((int)$admin['id'], $admin['username'], $admin['role']);
-            Audit::log('admin', (int)$admin['id'], 'login', "Admin logged in");
-            header("Location: index.php");
-            exit;
+        if (Captcha::isActive() && !Captcha::verify()) {
+            $error = "CAPTCHA verification failed. Please try again.";
         } else {
-            $error = "Invalid username or password.";
+            $username = trim($_POST['username'] ?? '');
+            $password = $_POST['password'] ?? '';
+            
+            $admin = DB::fetch("SELECT * FROM admins WHERE username = :username", [':username' => $username]);
+            if ($admin && password_verify($password, $admin['password'])) {
+                Auth::loginAdmin((int)$admin['id'], $admin['username'], $admin['role']);
+                Audit::log('admin', (int)$admin['id'], 'login', "Admin logged in");
+                header("Location: index.php");
+                exit;
+            } else {
+                $error = "Invalid username or password.";
+            }
         }
     }
     ?>
@@ -169,6 +175,7 @@ if (!Auth::isAdminLoggedIn()) {
                     <label>Password</label>
                     <input type="password" name="password" required>
                 </div>
+                <?php echo Captcha::render(); ?>
                 <button type="submit" class="btn">Sign In</button>
             </form>
         </div>
@@ -298,6 +305,13 @@ switch ($view) {
         $viewTitle = 'Platform Settings & SMTP Configuration';
         ob_start();
         require __DIR__ . '/settings.php';
+        $viewContent = ob_get_clean();
+        break;
+
+    case 'tickets':
+        $viewTitle = 'Support Tickets Dashboard';
+        ob_start();
+        require __DIR__ . '/tickets.php';
         $viewContent = ob_get_clean();
         break;
 
@@ -691,6 +705,7 @@ switch ($view) {
         <li class="<?php echo $view === 'licenses' ? 'active' : ''; ?>"><a href="index.php?view=licenses">Licenses engine</a></li>
         <li class="<?php echo $view === 'cms' ? 'active' : ''; ?>"><a href="index.php?view=cms">CMS Builder</a></li>
         <li class="<?php echo $view === 'customers' ? 'active' : ''; ?>"><a href="index.php?view=customers">Customers list</a></li>
+        <li class="<?php echo $view === 'tickets' ? 'active' : ''; ?>"><a href="index.php?view=tickets">Support Tickets</a></li>
         <li class="<?php echo $view === 'settings' ? 'active' : ''; ?>"><a href="index.php?view=settings">Settings & SMTP</a></li>
         <li class="<?php echo $view === 'audit_log' ? 'active' : ''; ?>"><a href="index.php?view=audit_log">Audit logs</a></li>
         <li style="margin-top: auto;"><a href="index.php?view=logout" style="color: #f87171;">Logout</a></li>

@@ -25,6 +25,7 @@ use Vault\Crypto;
 use Vault\Csrf;
 use Vault\Storage;
 use Vault\Audit;
+use Vault\Captcha;
 
 // Start session
 Auth::startSession();
@@ -86,21 +87,26 @@ if ($path === 'login') {
     
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         Csrf::verifyOrDie();
-        $email = trim($_POST['email'] ?? '');
-        $password = $_POST['password'] ?? '';
         
-        $user = DB::fetch("SELECT * FROM users WHERE email = :email", [':email' => $email]);
-        if ($user && password_verify($password, $user['password'])) {
-            if ($user['status'] === 'suspended') {
-                $error = "Your account has been suspended.";
-            } else {
-                Auth::loginCustomer((int)$user['id'], $user['email'], $user['name']);
-                Audit::log('customer', (int)$user['id'], 'login', "Customer logged in");
-                header("Location: $baseUrl/dashboard");
-                exit;
-            }
+        if (Captcha::isActive() && !Captcha::verify()) {
+            $error = "CAPTCHA verification failed. Please try again.";
         } else {
-            $error = "Invalid email or password.";
+            $email = trim($_POST['email'] ?? '');
+            $password = $_POST['password'] ?? '';
+            
+            $user = DB::fetch("SELECT * FROM users WHERE email = :email", [':email' => $email]);
+            if ($user && password_verify($password, $user['password'])) {
+                if ($user['status'] === 'suspended') {
+                    $error = "Your account has been suspended.";
+                } else {
+                    Auth::loginCustomer((int)$user['id'], $user['email'], $user['name']);
+                    Audit::log('customer', (int)$user['id'], 'login', "Customer logged in");
+                    header("Location: $baseUrl/dashboard");
+                    exit;
+                }
+            } else {
+                $error = "Invalid email or password.";
+            }
         }
     }
     
@@ -119,6 +125,7 @@ if ($path === 'login') {
                 <label>Password</label>
                 <input type="password" name="password" required>
             </div>
+            <?php echo Captcha::render(); ?>
             <button type="submit" class="btn">Sign In</button>
         </form>
         <p class="auth-switch">Don't have an account? <a href="<?php echo $baseUrl; ?>/register">Register here</a></p>
@@ -135,35 +142,40 @@ if ($path === 'login') {
     
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         Csrf::verifyOrDie();
-        $name = trim($_POST['name'] ?? '');
-        $email = trim($_POST['email'] ?? '');
-        $password = $_POST['password'] ?? '';
-        $password_conf = $_POST['password_confirm'] ?? '';
         
-        if (strlen($name) < 2) {
-            $error = "Please enter your name.";
-        } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            $error = "Please enter a valid email address.";
-        } elseif (strlen($password) < 8) {
-            $error = "Password must be at least 8 characters.";
-        } elseif ($password !== $password_conf) {
-            $error = "Passwords do not match.";
+        if (Captcha::isActive() && !Captcha::verify()) {
+            $error = "CAPTCHA verification failed. Please try again.";
         } else {
-            // Check existing
-            $existing = DB::fetch("SELECT id FROM users WHERE email = :email", [':email' => $email]);
-            if ($existing) {
-                $error = "An account with this email already exists.";
+            $name = trim($_POST['name'] ?? '');
+            $email = trim($_POST['email'] ?? '');
+            $password = $_POST['password'] ?? '';
+            $password_conf = $_POST['password_confirm'] ?? '';
+            
+            if (strlen($name) < 2) {
+                $error = "Please enter your name.";
+            } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                $error = "Please enter a valid email address.";
+            } elseif (strlen($password) < 8) {
+                $error = "Password must be at least 8 characters.";
+            } elseif ($password !== $password_conf) {
+                $error = "Passwords do not match.";
             } else {
-                $hashed = password_hash($password, PASSWORD_BCRYPT);
-                DB::execute(
-                    "INSERT INTO users (name, email, password, status) VALUES (:name, :email, :password, 'active')",
-                    [':name' => $name, ':email' => $email, ':password' => $hashed]
-                );
-                $newId = (int)DB::lastInsertId();
-                Auth::loginCustomer($newId, $email, $name);
-                Audit::log('customer', $newId, 'registered', "New customer registered");
-                header("Location: $baseUrl/dashboard");
-                exit;
+                // Check existing
+                $existing = DB::fetch("SELECT id FROM users WHERE email = :email", [':email' => $email]);
+                if ($existing) {
+                    $error = "An account with this email already exists.";
+                } else {
+                    $hashed = password_hash($password, PASSWORD_BCRYPT);
+                    DB::execute(
+                        "INSERT INTO users (name, email, password, status) VALUES (:name, :email, :password, 'active')",
+                        [':name' => $name, ':email' => $email, ':password' => $hashed]
+                    );
+                    $newId = (int)DB::lastInsertId();
+                    Auth::loginCustomer($newId, $email, $name);
+                    Audit::log('customer', $newId, 'registered', "New customer registered");
+                    header("Location: $baseUrl/dashboard");
+                    exit;
+                }
             }
         }
     }
@@ -191,6 +203,7 @@ if ($path === 'login') {
                 <label>Confirm Password</label>
                 <input type="password" name="password_confirm" required>
             </div>
+            <?php echo Captcha::render(); ?>
             <button type="submit" class="btn">Register</button>
         </form>
         <p class="auth-switch">Already have an account? <a href="<?php echo $baseUrl; ?>/login">Login here</a></p>
@@ -222,14 +235,18 @@ if ($path === 'login') {
     
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         Csrf::verifyOrDie();
-        $email = trim($_POST['email'] ?? '');
-        $name = trim($_POST['name'] ?? '');
-
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            $error = "Please enter a valid email address.";
-        } elseif (empty($name)) {
-            $error = "Please enter your name.";
+        
+        if (Captcha::isActive() && !Captcha::verify()) {
+            $error = "CAPTCHA verification failed. Please try again.";
         } else {
+            $email = trim($_POST['email'] ?? '');
+            $name = trim($_POST['name'] ?? '');
+
+            if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                $error = "Please enter a valid email address.";
+            } elseif (empty($name)) {
+                $error = "Please enter your name.";
+            } else {
             // Generate signed verification token valid for 2 hours
             $expires = time() + 7200;
             $token = hash_hmac('sha256', $email . '.' . $expires, $masterKey);
@@ -251,6 +268,7 @@ if ($path === 'login') {
             }
         }
     }
+}
     
     // Display result page
     $pageTitle = "Claim Trial - " . $siteName;
@@ -411,6 +429,154 @@ if ($path === 'login') {
             </div>
             <a href="<?php echo $baseUrl; ?>/dashboard" class="btn">Go to Dashboard</a>
         <?php endif; ?>
+    </div>
+    <?php
+    $routeContent = ob_get_clean();
+
+} elseif ($path === 'open-ticket') {
+    $error = null;
+    $success = null;
+    $ticketToken = null;
+
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        Csrf::verifyOrDie();
+
+        if (Captcha::isActive() && !Captcha::verify()) {
+            $error = "CAPTCHA verification failed. Please try again.";
+        } else {
+            $name = trim($_POST['name'] ?? '');
+            $email = trim($_POST['email'] ?? '');
+            $subject = trim($_POST['subject'] ?? '');
+            $message = trim($_POST['message'] ?? '');
+
+            if (empty($name) || empty($email) || empty($subject) || empty($message)) {
+                $error = "All fields are required to open a support ticket.";
+            } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                $error = "Please enter a valid email address.";
+            } else {
+                // Generate secure random ticket token
+                $ticketToken = 'tk_' . bin2hex(random_bytes(8));
+                
+                // Fetch logged-in user id if any
+                $userId = null;
+                if (Auth::isCustomerLoggedIn()) {
+                    $userId = (int)Auth::getCurrentCustomer()['id'];
+                }
+
+                // Start transaction to insert ticket and message
+                try {
+                    DB::transaction(function($conn) use ($ticketToken, $userId, $name, $email, $subject, $message) {
+                        // Insert ticket
+                        DB::execute("
+                            INSERT INTO support_tickets (ticket_token, user_id, name, email, subject, status)
+                            VALUES (?, ?, ?, ?, ?, 'open')
+                        ", [$ticketToken, $userId, $name, $email, $subject]);
+
+                        $ticketId = (int)DB::lastInsertId();
+
+                        // Insert initial message
+                        DB::execute("
+                            INSERT INTO ticket_messages (ticket_id, sender_type, sender_name, message)
+                            VALUES (?, 'customer', ?, ?)
+                        ", [$ticketId, $name, $message]);
+                    });
+
+                    // Send email containing token details
+                    $trackingUrl = $baseUrl . '/?token=' . $ticketToken . '#trial-section';
+                    $emailSubject = "Your Support Ticket has been created: " . $subject;
+                    $emailBody = "<h3>Support Ticket Created</h3>" .
+                                 "<p>Hello " . htmlspecialchars($name) . ",</p>" .
+                                 "<p>Thank you for reaching out. We have opened a support ticket for you regarding: <strong>" . htmlspecialchars($subject) . "</strong></p>" .
+                                 "<p><strong>Your Support Token:</strong></p>" .
+                                 "<pre style='background:#f1f5f9; padding:10px; border-radius:6px; font-family:monospace; border:1px solid #cbd5e1; font-size:1.1rem; text-align:center;'>{$ticketToken}</pre>" .
+                                 "<p>To check the status of your ticket and respond to admin updates, please use the link below:</p>" .
+                                 "<p><a href='{$trackingUrl}' style='display:inline-block; padding:10px 20px; background:#2563eb; color:#fff; text-decoration:none; border-radius:6px; font-weight:bold;'>Track Your Ticket</a></p>";
+                    
+                    \Vault\Mailer::send($email, $emailSubject, $emailBody);
+
+                    $success = "Support ticket submitted successfully! Check your inbox for your tracking token.";
+                } catch (Exception $e) {
+                    $error = "Unable to create support ticket: " . $e->getMessage();
+                }
+            }
+        }
+    }
+
+    $pageTitle = "Submit Support Ticket - " . $siteName;
+    ob_start();
+    ?>
+    <div class="auth-card" style="max-width:550px; text-align:center;">
+        <h2>Support Ticket Submission</h2>
+        <?php if (!empty($error)): ?>
+            <div class="alert alert-danger"><?php echo htmlspecialchars($error); ?></div>
+            <a href="<?php echo $baseUrl; ?>#trial-section" class="btn" style="margin-top:1rem;">Back to Home</a>
+        <?php elseif (!empty($success)): ?>
+            <div class="success-illustration" style="margin: 1.5rem 0;">
+                <div class="success-icon" style="border-color:var(--success); color:var(--success); font-size: 3rem; width: 60px; height: 60px; border-radius: 50%; border: 2px solid; display: inline-flex; align-items: center; justify-content: center;">&checkmark;</div>
+            </div>
+            <h3 style="color:var(--success); margin-bottom:1rem;">Ticket Submitted!</h3>
+            <div style="color:var(--text-muted); line-height:1.6; margin-bottom:1.5rem; font-size:0.95rem;">
+                <?php echo htmlspecialchars($success); ?>
+            </div>
+            <div style="background:rgba(37,99,235,0.04); border:1px solid rgba(37,99,235,0.15); padding:1rem; border-radius:10px; margin-bottom:1.5rem; text-align:left;">
+                <span class="form-label" style="margin-bottom:0.25rem;">Your Ticket Token:</span>
+                <code style="font-size:1.2rem; font-weight:700; color:var(--primary); word-break:break-all;"><?php echo htmlspecialchars($ticketToken); ?></code>
+                <span style="font-size:0.75rem; color:var(--text-muted); display:block; margin-top:0.5rem;">
+                    Use this token in the Tracking Panel on the homepage to view updates and reply directly.
+                </span>
+            </div>
+            <a href="<?php echo $baseUrl; ?>/?token=<?php echo urlencode($ticketToken); ?>#trial-section" class="btn">Go Track Ticket</a>
+        <?php endif; ?>
+    </div>
+    <?php
+    $routeContent = ob_get_clean();
+
+} elseif ($path === 'reply-ticket') {
+    $error = null;
+    $token = $_POST['token'] ?? '';
+    
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        Csrf::verifyOrDie();
+        
+        if (Captcha::isActive() && !Captcha::verify()) {
+            $error = "CAPTCHA verification failed. Please try again.";
+        } else {
+            $message = trim($_POST['message'] ?? '');
+            
+            // Find ticket by token
+            $ticket = DB::fetch("SELECT * FROM support_tickets WHERE ticket_token = ?", [$token]);
+            if (!$ticket) {
+                $error = "Invalid or expired ticket token.";
+            } elseif ($ticket['status'] === 'closed') {
+                $error = "This support ticket is closed. Please open a new inquiry if you require additional assistance.";
+            } elseif (empty($message)) {
+                $error = "Message content cannot be empty.";
+            } else {
+                // Add reply message
+                DB::execute("
+                    INSERT INTO ticket_messages (ticket_id, sender_type, sender_name, message)
+                    VALUES (?, 'customer', ?, ?)
+                ", [$ticket['id'], $ticket['name'], $message]);
+                
+                // Set status back to 'open' so admin sees a new reply
+                DB::execute("
+                    UPDATE support_tickets SET status = 'open', updated_at = CURRENT_TIMESTAMP WHERE id = ?
+                ", [$ticket['id']]);
+                
+                // Redirect back to track page
+                header("Location: " . $baseUrl . "/?token=" . urlencode($token) . "#trial-section");
+                exit;
+            }
+        }
+    }
+    
+    $pageTitle = "Ticket Reply Error";
+    ob_start();
+    ?>
+    <div class="auth-card" style="max-width:550px; text-align:center;">
+        <h2>Ticket Reply Error</h2>
+        <div class="alert alert-danger"><?php echo htmlspecialchars($error ?: 'An unexpected error occurred.'); ?></div>
+        <a href="<?php echo $baseUrl; ?>/?token=<?php echo urlencode($token); ?>#trial-section" class="btn">Back to Ticket</a>
     </div>
     <?php
     $routeContent = ob_get_clean();
@@ -734,33 +900,203 @@ if ($path === 'login') {
                     </div>
                 </div>
 
-                <!-- Lead Trial Capture Form Section -->
-                <div id="trial-section" style="padding: 6rem 0 2rem 0; text-align: center; max-width: 600px; margin: 0 auto;">
-                    <span class="badge-tag" style="margin-bottom: 1rem;">Instant Onboarding</span>
-                    <h2>Claim Your 1-Year Free License Key</h2>
-                    <p style="color: var(--text-muted); margin: 0.5rem 0 2.5rem 0; font-size: 0.95rem;">
-                        Verify your email address to automatically register a customer dashboard account and receive your signed Ed25519 license token.
-                    </p>
-                    
-                    <div class="trial-card glow-base" style="margin-top: 1rem;">
-                        <form action="<?php echo $baseUrl; ?>/claim-trial" method="post">
-                            <?php echo Csrf::getHiddenInput(); ?>
-                            <div class="form-group">
-                                <label class="form-label">Your Name</label>
-                                <input type="text" name="name" required placeholder="e.g. Yaser Ratul">
+                <!-- Dynamic Onboarding & Support Ticket Panel Section -->
+                <div id="trial-section" style="padding: 6rem 0 2rem 0; text-align: center; max-width: 650px; margin: 0 auto;">
+                    <?php
+                    $activeToken = trim($_GET['token'] ?? '');
+                    $activeTicket = null;
+                    $ticketMessages = [];
+
+                    if (!empty($activeToken)) {
+                        $activeTicket = DB::fetch("SELECT * FROM support_tickets WHERE ticket_token = ?", [$activeToken]);
+                        if ($activeTicket) {
+                            $ticketMessages = DB::fetchAll("SELECT * FROM ticket_messages WHERE ticket_id = ? ORDER BY created_at ASC", [$activeTicket['id']]);
+                        }
+                    }
+
+                    if ($activeTicket): 
+                    ?>
+                        <!-- ACTIVE TICKET CONVERSATION PANEL -->
+                        <span class="badge-tag" style="margin-bottom: 1rem;">Support Ticket Active</span>
+                        <h2 style="font-size: 2rem;"><?php echo htmlspecialchars($activeTicket['subject']); ?></h2>
+                        <div style="display:flex; justify-content:center; gap:1.5rem; align-items:center; margin: 0.5rem 0 2.5rem 0; font-size:0.85rem; color:var(--text-muted);">
+                            <span>Status: <strong class="ticket-badge badge-<?php echo $activeTicket['status']; ?>"><?php echo strtoupper($activeTicket['status']); ?></strong></span>
+                            <span>Token: <code><?php echo htmlspecialchars($activeToken); ?></code></span>
+                        </div>
+
+                        <div class="trial-card glow-base" style="text-align: left; padding: 2.5rem 2rem;">
+                            <!-- Conversation thread bubbles -->
+                            <div class="customer-chat-thread" style="max-height: 400px; overflow-y: auto; padding: 1rem; background: rgba(15,23,42,0.01); border: 1px solid var(--border-color); border-radius: 12px; margin-bottom: 2rem; display: flex; flex-direction: column; gap: 1.25rem;">
+                                <?php foreach ($ticketMessages as $msg): ?>
+                                    <div style="display:flex; flex-direction:column; max-width: 80%; <?php echo $msg['sender_type'] === 'admin' ? 'align-self: flex-start;' : 'align-self: flex-end;'; ?>">
+                                        <div style="font-size: 0.7rem; font-weight: 700; color: var(--text-muted); margin-bottom: 0.25rem; text-transform: uppercase; <?php echo $msg['sender_type'] === 'admin' ? '' : 'text-align: right;'; ?>">
+                                            <?php echo htmlspecialchars($msg['sender_name']); ?>
+                                        </div>
+                                        <div style="padding: 0.85rem 1.15rem; border-radius: 12px; font-size: 0.9rem; line-height: 1.5; <?php echo $msg['sender_type'] === 'admin' ? 'background: #f1f5f9; color:#0f172a; border-top-left-radius:2px; border:1px solid rgba(15,23,42,0.06);' : 'background: var(--primary); color:#fff; border-top-right-radius:2px;'; ?>">
+                                            <?php echo nl2br(htmlspecialchars($msg['message'])); ?>
+                                        </div>
+                                        <div style="font-size: 0.65rem; color: var(--text-muted); margin-top: 0.25rem; <?php echo $msg['sender_type'] === 'admin' ? '' : 'text-align: right;'; ?>">
+                                            <?php echo date('h:i A, M d', strtotime($msg['created_at'])); ?>
+                                        </div>
+                                    </div>
+                                <?php endforeach; ?>
                             </div>
-                            <div class="form-group">
-                                <label class="form-label">Email Address</label>
-                                <input type="email" name="email" required placeholder="e.g. owner@yaratul.com">
+
+                            <!-- Customer Reply Form -->
+                            <?php if ($activeTicket['status'] !== 'closed'): ?>
+                                <form action="<?php echo $baseUrl; ?>/reply-ticket" method="post" id="ticket-reply-form" class="fluid-form">
+                                    <?php echo Csrf::getHiddenInput(); ?>
+                                    <input type="hidden" name="token" value="<?php echo htmlspecialchars($activeToken); ?>">
+                                    
+                                    <div class="form-group">
+                                        <label class="form-label">Write your reply</label>
+                                        <textarea name="message" required placeholder="Type your response here..." rows="4" style="width:100%; border-radius:10px; padding:0.8rem 1rem; border:1px solid var(--border-color);"></textarea>
+                                    </div>
+                                    
+                                    <?php echo Captcha::render(); ?>
+
+                                    <button type="submit" class="btn fluid-btn" style="width:100%; padding:1rem; font-weight:700; margin-top: 1rem;">
+                                        Submit Reply
+                                    </button>
+                                </form>
+                            <?php else: ?>
+                                <div style="background:#f1f5f9; color:var(--text-muted); text-align:center; padding:1.5rem; border-radius:12px; font-size:0.9rem; font-weight:600;">
+                                    This support ticket has been closed.
+                                </div>
+                            <?php endif; ?>
+
+                            <div style="text-align:center; margin-top:2rem; border-top: 1px solid rgba(15,23,42,0.06); padding-top:1.5rem;">
+                                <a href="<?php echo $baseUrl; ?>#trial-section" class="btn-text" style="color:var(--primary); font-weight:600; text-decoration:none;">&larr; Return to Support Dashboard</a>
                             </div>
-                            <button type="submit" class="btn" style="padding: 1rem; font-size: 1rem; margin-top: 1rem; font-weight: 700; box-shadow: 0 4px 20px rgba(99,102,241,0.3);">
-                                Send Verification Link
-                            </button>
-                        </form>
-                        <span style="font-size:0.75rem; color:var(--text-muted); display:block; margin-top:1.25rem;">
-                            *No credit card required. Free updates and secure zip file downloads included.
-                        </span>
-                    </div>
+                        </div>
+
+                    <?php else: ?>
+                        <!-- MULTI-TAB ONBOARDING & SUPPORT PANEL -->
+                        <span class="badge-tag" style="margin-bottom: 1rem;">Onboarding & Support</span>
+                        <h2>Get Started or Request Support</h2>
+                        <p style="color: var(--text-muted); margin: 0.5rem 0 2.5rem 0; font-size: 0.95rem;">
+                            Claim your free trial license key, open a secure support ticket, or check updates on an existing inquiry.
+                        </p>
+
+                        <?php if (!empty($activeToken)): ?>
+                            <div class="alert alert-danger" style="margin-bottom: 1.5rem; padding: 0.75rem 1rem; border-radius: 8px; font-size: 0.85rem;">
+                                Error: Ticket token not found. Please double-check your token.
+                            </div>
+                        <?php endif; ?>
+
+                        <!-- Interactive Glassmorphic Tabs Card -->
+                        <div class="trial-card glow-base" style="margin-top: 1rem; padding: 2.5rem 2rem;">
+                            <!-- Tabs Header -->
+                            <div class="onboarding-tabs" style="display:flex; justify-content:space-between; gap:0.5rem; border-bottom:1px solid rgba(15,23,42,0.08); padding-bottom:1rem; margin-bottom:2rem;">
+                                <button type="button" class="tab-btn active" onclick="switchOnboardingTab('claim-tab')" style="flex:1; padding:0.6rem 0.5rem; font-size:0.85rem; font-weight:700; border:none; background:none; color:var(--text-muted); cursor:pointer; transition:all 0.2s; border-bottom:3px solid transparent;">Claim Trial</button>
+                                <button type="button" class="tab-btn" onclick="switchOnboardingTab('ticket-tab')" style="flex:1; padding:0.6rem 0.5rem; font-size:0.85rem; font-weight:700; border:none; background:none; color:var(--text-muted); cursor:pointer; transition:all 0.2s; border-bottom:3px solid transparent;">Open Ticket</button>
+                                <button type="button" class="tab-btn" onclick="switchOnboardingTab('track-tab')" style="flex:1; padding:0.6rem 0.5rem; font-size:0.85rem; font-weight:700; border:none; background:none; color:var(--text-muted); cursor:pointer; transition:all 0.2s; border-bottom:3px solid transparent;">Track Ticket</button>
+                            </div>
+
+                            <!-- Tab 1: Claim Free License -->
+                            <div id="claim-tab" class="tab-content active-content">
+                                <form action="<?php echo $baseUrl; ?>/claim-trial" method="post" class="fluid-form">
+                                    <?php echo Csrf::getHiddenInput(); ?>
+                                    <div class="form-group">
+                                        <label class="form-label" style="text-align:left;">Your Name</label>
+                                        <input type="text" name="name" required placeholder="e.g. Yaser Ratul">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label" style="text-align:left;">Email Address</label>
+                                        <input type="email" name="email" required placeholder="e.g. owner@yaratul.com">
+                                    </div>
+                                    <?php echo Captcha::render(); ?>
+                                    <button type="submit" class="btn fluid-btn" style="padding: 1rem; font-size: 1rem; margin-top: 1rem; font-weight: 700; width: 100%;">
+                                        Claim Trial License
+                                    </button>
+                                </form>
+                                <span style="font-size:0.75rem; color:var(--text-muted); display:block; margin-top:1.25rem;">
+                                    *No credit card required. Free updates and secure zip file downloads included.
+                                </span>
+                            </div>
+
+                            <!-- Tab 2: Create Support Ticket -->
+                            <div id="ticket-tab" class="tab-content" style="display:none;">
+                                <form action="<?php echo $baseUrl; ?>/open-ticket" method="post" class="fluid-form">
+                                    <?php echo Csrf::getHiddenInput(); ?>
+                                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:1rem;">
+                                        <div class="form-group">
+                                            <label class="form-label" style="text-align:left;">Your Name</label>
+                                            <input type="text" name="name" required placeholder="e.g. John Doe">
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="form-label" style="text-align:left;">Email Address</label>
+                                            <input type="email" name="email" required placeholder="name@example.com">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label" style="text-align:left;">Subject of Inquiry</label>
+                                        <input type="text" name="subject" required placeholder="e.g. Verification link 500 error">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label" style="text-align:left;">Detailed Message</label>
+                                        <textarea name="message" required placeholder="Describe your issue in detail..." rows="4" style="width:100%; border-radius:10px; padding:0.8rem 1rem; border:1px solid var(--border-color);"></textarea>
+                                    </div>
+                                    <?php echo Captcha::render(); ?>
+                                    <button type="submit" class="btn fluid-btn" style="padding: 1rem; font-size: 1rem; margin-top: 1rem; font-weight: 700; width: 100%;">
+                                        Submit Ticket Inquiry
+                                    </button>
+                                </form>
+                            </div>
+
+                            <!-- Tab 3: Track Ticket -->
+                            <div id="track-tab" class="tab-content" style="display:none;">
+                                <form action="<?php echo $baseUrl; ?>/" method="get" class="fluid-form">
+                                    <div class="form-group">
+                                        <label class="form-label" style="text-align:left;">Enter Ticket Token</label>
+                                        <input type="text" name="token" required placeholder="e.g. tk_f8e48a12dc...">
+                                    </div>
+                                    <button type="submit" class="btn fluid-btn" style="padding: 1rem; font-size: 1rem; margin-top: 1rem; font-weight: 700; width: 100%;">
+                                        Search & Track Ticket
+                                    </button>
+                                </form>
+                                <span style="font-size:0.75rem; color:var(--text-muted); display:block; margin-top:1.25rem;">
+                                    *The ticket token was shown on screen and emailed to you when you submitted your inquiry.
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Client-Side Tabs Switching Logic -->
+                        <script>
+                        function switchOnboardingTab(tabId) {
+                            // Hide all content blocks
+                            document.querySelectorAll('.tab-content').forEach(function(el) {
+                                el.style.display = 'none';
+                            });
+                            // Deactivate all buttons
+                            document.querySelectorAll('.tab-btn').forEach(function(el) {
+                                el.classList.remove('active');
+                            });
+                            
+                            // Show active content and set button active
+                            document.getElementById(tabId).style.display = 'block';
+                            event.currentTarget.classList.add('active');
+                        }
+                        </script>
+                        
+                        <!-- Custom CSS overrides for badges and tabs inside homepage styling -->
+                        <style>
+                        .onboarding-tabs .tab-btn.active {
+                            border-bottom-color: var(--primary) !important;
+                            color: var(--primary) !important;
+                        }
+                        .ticket-badge {
+                            font-size: 0.7rem;
+                            font-weight: 700;
+                            padding: 0.15rem 0.4rem;
+                            border-radius: 50px;
+                        }
+                        .badge-open { background: #fee2e2; color: #ef4444; }
+                        .badge-pending { background: #fef3c7; color: #d97706; }
+                        .badge-resolved { background: #d1fae5; color: #059669; }
+                        .badge-closed { background: #e2e8f0; color: #64748b; }
+                        </style>
+                    <?php endif; ?>
                 </div>
                 <?php
                 $routeContent = ob_get_clean();
@@ -1839,6 +2175,52 @@ if ($path === 'login') {
             text-transform: uppercase;
             letter-spacing: 0.05em;
         }
+
+        /* Fluid Animations & Focus States */
+        @keyframes fluid-pulse {
+            0% { box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(37, 99, 235, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(37, 99, 235, 0); }
+        }
+        @keyframes fluid-gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        @keyframes spinner-rotate {
+            to { transform: rotate(360deg); }
+        }
+
+        .fluid-btn-loading {
+            position: relative;
+            color: transparent !important;
+            pointer-events: none;
+            background: linear-gradient(-45deg, #2563eb, #1d4ed8, #0ea5e9, #2563eb) !important;
+            background-size: 300% 300% !important;
+            animation: fluid-gradient 2s ease infinite, fluid-pulse 1.5s infinite !important;
+        }
+        .fluid-btn-loading::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            top: 50%;
+            left: 50%;
+            margin-top: -10px;
+            margin-left: -10px;
+            border: 2px solid rgba(255, 255, 255, 0.4);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spinner-rotate 0.6s linear infinite;
+        }
+
+        /* Focus glow borders for all inputs */
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: var(--primary) !important;
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12) !important;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
     </style>
     <!-- Site wide custom tracking scripts -->
     <?php echo $siteHeadScripts; ?>
@@ -1910,5 +2292,22 @@ if ($path === 'login') {
     </div>
 </footer>
 
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Intercept form submissions to show the fluid button loading state
+    const forms = document.querySelectorAll('form.fluid-form, .auth-card form');
+    forms.forEach(function(form) {
+        form.addEventListener('submit', function(e) {
+            const submitBtn = form.querySelector('button[type="submit"]');
+            if (submitBtn) {
+                const rect = submitBtn.getBoundingClientRect();
+                submitBtn.style.minWidth = rect.width + 'px';
+                submitBtn.style.minHeight = rect.height + 'px';
+                submitBtn.classList.add('fluid-btn-loading');
+            }
+        });
+    });
+});
+</script>
 </body>
 </html>

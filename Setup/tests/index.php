@@ -141,6 +141,82 @@ try {
     $cleaned = DB::fetch("SELECT id FROM settings WHERE setting_key = 'test_suite_key'");
     assertTest("Database DELETE statement removes test row", $cleaned === null);
 
+    // ----------------------------------------------------
+    // TEST GROUP 4: CAPTCHA Service
+    // ----------------------------------------------------
+    echo "\n--- Running CAPTCHA Service Tests ---\n";
+    // Force set settings for testing
+    DB::execute("DELETE FROM settings WHERE setting_key = 'captcha_enabled'");
+    DB::execute("INSERT INTO settings (setting_key, setting_value) VALUES ('captcha_enabled', '1')");
+    DB::execute("DELETE FROM settings WHERE setting_key = 'captcha_provider'");
+    DB::execute("INSERT INTO settings (setting_key, setting_value) VALUES ('captcha_provider', 'local')");
+
+    assertTest("CAPTCHA Service correctly detects enabled status", \Vault\Captcha::isActive() === true);
+
+    // Test math challenge generation
+    $html = \Vault\Captcha::render();
+    assertTest("Math CAPTCHA outputs challenge input markup", strpos($html, 'crxsm_captcha_answer') !== false);
+    assertTest("Math CAPTCHA registers answer in session", isset($_SESSION['crxsm_captcha_answer']));
+
+    // Verify correct submission
+    $_POST['crxsm_captcha_answer'] = $_SESSION['crxsm_captcha_answer'];
+    assertTest("CAPTCHA verifies correct mathematical answer", \Vault\Captcha::verify() === true);
+
+    // Verify incorrect submission
+    $_SESSION['crxsm_captcha_answer'] = 15;
+    $_POST['crxsm_captcha_answer'] = 99;
+    assertTest("CAPTCHA rejects incorrect mathematical answer", \Vault\Captcha::verify() === false);
+
+    // Clean up
+    DB::execute("DELETE FROM settings WHERE setting_key IN ('captcha_enabled', 'captcha_provider')");
+
+
+    // ----------------------------------------------------
+    // TEST GROUP 5: Support Tickets & Messages
+    // ----------------------------------------------------
+    echo "\n--- Running Support Tickets Tests ---\n";
+    $token = 'tk_test_suite_12345';
+    
+    // Clean potential previous tests
+    DB::execute("DELETE FROM support_tickets WHERE ticket_token = ?", [$token]);
+
+    // Create ticket
+    DB::execute("
+        INSERT INTO support_tickets (ticket_token, name, email, subject, status)
+        VALUES (?, 'Test User', 'test@test.com', 'Test Subject', 'open')
+    ", [$token]);
+
+    $ticket = DB::fetch("SELECT * FROM support_tickets WHERE ticket_token = ?", [$token]);
+    assertTest("Support Ticket is inserted and retrievable via token", $ticket !== null && $ticket['subject'] === 'Test Subject');
+
+    $ticketId = (int)$ticket['id'];
+
+    // Insert Message
+    DB::execute("
+        INSERT INTO ticket_messages (ticket_id, sender_type, sender_name, message)
+        VALUES (?, 'customer', 'Test User', 'Initial message details')
+    ", [$ticketId]);
+
+    $message = DB::fetch("SELECT * FROM ticket_messages WHERE ticket_id = ?", [$ticketId]);
+    assertTest("Ticket messages are logged and linked to ticket ID", $message !== null && $message['message'] === 'Initial message details');
+
+    // Admin Reply
+    DB::execute("
+        INSERT INTO ticket_messages (ticket_id, sender_type, sender_name, message)
+        VALUES (?, 'admin', 'System Admin', 'Admin Response details')
+    ", [$ticketId]);
+
+    // Update status
+    DB::execute("UPDATE support_tickets SET status = 'pending' WHERE id = ?", [$ticketId]);
+
+    $updatedTicket = DB::fetch("SELECT status FROM support_tickets WHERE id = ?", [$ticketId]);
+    assertTest("Support Ticket status updates succeed", $updatedTicket['status'] === 'pending');
+
+    // Clean up (Foreign Key cascade deletes messages)
+    DB::execute("DELETE FROM support_tickets WHERE id = ?", [$ticketId]);
+    $deletedMessages = DB::fetchAll("SELECT id FROM ticket_messages WHERE ticket_id = ?", [$ticketId]);
+    assertTest("Deleting Support Ticket cascades and deletes conversation messages", empty($deletedMessages));
+
 } catch (Exception $e) {
     echo "[ WARNING ] - Database tests skipped because database is not installed or configured yet.\n";
     echo "              Detail: " . $e->getMessage() . "\n";

@@ -27,7 +27,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $keys = [
             'site_name', 'site_description', 'site_head_scripts',
             'smtp_host', 'smtp_port', 'smtp_user', 'smtp_pass', 'smtp_enc',
-            'smtp_from_email', 'smtp_from_name', 'footer_zone_1'
+            'smtp_from_email', 'smtp_from_name', 'footer_zone_1',
+            'captcha_enabled', 'captcha_provider', 'captcha_site_key', 'captcha_secret_key'
         ];
 
         foreach ($keys as $key) {
@@ -180,6 +181,11 @@ $footerLinks = json_decode(getSettingVal('footer_zone_2', '[]'), true) ?: [];
 $footerZone3Config = json_decode(getSettingVal('footer_zone_3', '{"logo":"","socials":[]}'), true) ?: [];
 $footerLogo = $footerZone3Config['logo'] ?? '';
 $footerSocials = $footerZone3Config['socials'] ?? [];
+
+$captchaEnabled = getSettingVal('captcha_enabled', '0');
+$captchaProvider = getSettingVal('captcha_provider', 'local');
+$captchaSiteKey = getSettingVal('captcha_site_key', '');
+$captchaSecretKey = getSettingVal('captcha_secret_key', '');
 ?>
 
 <?php if (!empty($flashSuccess)): ?>
@@ -312,6 +318,49 @@ $footerSocials = $footerZone3Config['socials'] ?? [];
                 <textarea name="site_head_scripts" class="form-control" rows="5" style="font-family:monospace; font-size:0.8rem;" placeholder="<script>...</script>"><?php echo htmlspecialchars($siteHeadScripts); ?></textarea>
                 <span class="text-muted" style="font-size:0.75rem;">Injected site-wide inside the head tag of every front-end page.</span>
             </div>
+
+            <hr style="border:none; border-top:1px solid var(--border-color); margin:2rem 0;">
+
+            <!-- 5. CAPTCHA Settings -->
+            <h3 style="margin-bottom:1rem;">Anti-Spam / CAPTCHA Protection</h3>
+            <div class="form-group">
+                <label class="form-label">Enable CAPTCHA Protection</label>
+                <select name="captcha_enabled" class="form-control">
+                    <option value="0" <?php echo $captchaEnabled === '0' ? 'selected' : ''; ?>>Disabled</option>
+                    <option value="1" <?php echo $captchaEnabled === '1' ? 'selected' : ''; ?>>Enabled</option>
+                </select>
+                <span class="text-muted" style="font-size:0.75rem;">Enforces CAPTCHA checks on public forms (trial claims, login, registration, support tickets).</span>
+            </div>
+            <div class="form-group">
+                <label class="form-label">CAPTCHA Provider</label>
+                <select name="captcha_provider" class="form-control" id="captcha-provider-select" onchange="toggleCaptchaFields()">
+                    <option value="local" <?php echo $captchaProvider === 'local' ? 'selected' : ''; ?>>Local Mathematical Challenge (Zero-config)</option>
+                    <option value="hcaptcha" <?php echo $captchaProvider === 'hcaptcha' ? 'selected' : ''; ?>>hCaptcha</option>
+                    <option value="recaptcha" <?php echo $captchaProvider === 'recaptcha' ? 'selected' : ''; ?>>Google reCAPTCHA v2</option>
+                </select>
+            </div>
+            <div id="captcha-api-fields" style="display: <?php echo ($captchaProvider === 'hcaptcha' || $captchaProvider === 'recaptcha') ? 'block' : 'none'; ?>;">
+                <div class="form-group">
+                    <label class="form-label">Site Key</label>
+                    <input type="text" name="captcha_site_key" class="form-control" value="<?php echo htmlspecialchars($captchaSiteKey); ?>" placeholder="e.g. 10000000-ffff-2222-...">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Secret Key</label>
+                    <input type="password" name="captcha_secret_key" class="form-control" value="<?php echo htmlspecialchars($captchaSecretKey); ?>" placeholder="e.g. 0x0000000000000000000000000000000000000000">
+                </div>
+            </div>
+            
+            <script>
+            function toggleCaptchaFields() {
+                var select = document.getElementById('captcha-provider-select');
+                var fields = document.getElementById('captcha-api-fields');
+                if (select.value === 'local') {
+                    fields.style.display = 'none';
+                } else {
+                    fields.style.display = 'block';
+                }
+            }
+            </script>
 
             <button type="submit" class="btn-sm btn-primary" style="padding:0.75rem 1.5rem; margin-top:1rem;">Save All Configurations</button>
         </form>
