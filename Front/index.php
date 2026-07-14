@@ -275,10 +275,10 @@ if ($path === 'login') {
     ob_start();
     ?>
     <div class="auth-card" style="max-width:550px; text-align:center;">
-        <h2>Free Trial Verification</h2>
+        <h2>Claim Your 1-Year Free License Key</h2>
         <?php if ($error !== null): ?>
             <div class="alert alert-danger"><?php echo htmlspecialchars($error); ?></div>
-            <a href="<?php echo $baseUrl; ?>" class="btn" style="margin-top:1rem;">Back to Home</a>
+            <a href="<?php echo $baseUrl; ?>/claim-trial" class="btn" style="margin-top:1rem;">Try Again</a>
         <?php elseif ($success !== null): ?>
             <div class="success-illustration" style="margin: 1.5rem 0;">
                 <div class="success-icon" style="border-color:var(--success); color:var(--success); font-size: 3rem; width: 60px; height: 60px; border-radius: 50%; border: 2px solid; display: inline-flex; align-items: center; justify-content: center;">&checkmark;</div>
@@ -287,6 +287,28 @@ if ($path === 'login') {
                 <?php echo htmlspecialchars($success); ?>
             </div>
             <a href="<?php echo $baseUrl; ?>" class="btn">Back to Home</a>
+        <?php else: ?>
+            <p style="color: var(--text-muted); margin: 0.5rem 0 2rem 0; font-size: 0.95rem;">
+                Verify your email address to automatically register a customer dashboard account and receive your signed Ed25519 license token.
+            </p>
+            <form action="<?php echo $baseUrl; ?>/claim-trial" method="post" class="fluid-form" style="text-align: left;">
+                <?php echo Csrf::getHiddenInput(); ?>
+                <div class="form-group">
+                    <label class="form-label" style="font-weight: 500; font-size: 0.8rem; text-transform: uppercase;">Your Name</label>
+                    <input type="text" name="name" required placeholder="e.g. Yaser Ratul" style="width:100%; padding:0.8rem 1rem; border-radius:10px; border:1px solid var(--border-color); margin-top:0.25rem;">
+                </div>
+                <div class="form-group" style="margin-top:1rem;">
+                    <label class="form-label" style="font-weight: 500; font-size: 0.8rem; text-transform: uppercase;">Email Address</label>
+                    <input type="email" name="email" required placeholder="e.g. owner@yaratul.com" style="width:100%; padding:0.8rem 1rem; border-radius:10px; border:1px solid var(--border-color); margin-top:0.25rem;">
+                </div>
+                <?php echo Captcha::render(); ?>
+                <button type="submit" class="btn fluid-btn" style="padding: 1rem; font-size: 1rem; margin-top: 1.5rem; font-weight: 700; width:100%; box-shadow: 0 4px 20px rgba(37,99,235,0.25);">
+                    Send Verification Link
+                </button>
+            </form>
+            <span style="font-size:0.75rem; color:var(--text-muted); display:block; margin-top:1.25rem;">
+                *No credit card required. Free updates and secure zip file downloads included.
+            </span>
         <?php endif; ?>
     </div>
     <?php
@@ -748,7 +770,7 @@ if ($path === 'login') {
                         </div>
 
                         <div style="margin-top: 2rem; display: flex; gap: 1rem; flex-wrap: wrap;">
-                            <a href="<?php echo $baseUrl; ?>/register" target="_blank" class="btn" style="max-width: 240px; box-shadow: 0 0 20px rgba(37, 99, 235, 0.4);">Claim Free Trial Key</a>
+                            <a href="<?php echo $baseUrl; ?>/claim-trial" target="_blank" class="btn" style="max-width: 240px; box-shadow: 0 0 20px rgba(37, 99, 235, 0.4);">Claim Free Trial Key</a>
                             <a href="https://github.com/yaratul2005/ServerTrack" target="_blank" rel="noopener noreferrer" class="btn btn-secondary" style="max-width: 200px;">GitHub Repo</a>
                         </div>
                     </div>
