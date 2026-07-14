@@ -776,25 +776,52 @@ if ($path === 'login') {
                     </div>
 
                     <div class="hero-right">
-                        <div class="code-window">
-                            <div class="code-window-header">
-                                <span class="dot red"></span>
-                                <span class="dot yellow"></span>
-                                <span class="dot green"></span>
-                                <span class="title">class-ratuls-act.php</span>
+                        <div class="code-window" style="display: flex; flex-direction: column; min-height: 380px;">
+                            <div class="code-window-header" style="display: flex; align-items: center; justify-content: space-between; padding: 0.75rem 1rem; background: rgba(15, 23, 42, 0.9); border-bottom: 1px solid rgba(255, 255, 255, 0.06); flex-shrink: 0; flex-wrap: wrap; gap: 0.5rem;">
+                                <div style="display: flex; gap: 6px; align-items: center;">
+                                    <span class="dot red" style="width: 10px; height: 10px; border-radius: 50%; background: #ef4444; display: inline-block;"></span>
+                                    <span class="dot yellow" style="width: 10px; height: 10px; border-radius: 50%; background: #f59e0b; display: inline-block;"></span>
+                                    <span class="dot green" style="width: 10px; height: 10px; border-radius: 50%; background: #10b981; display: inline-block;"></span>
+                                </div>
+                                <div class="hero-tabs" style="display: flex; gap: 0.3rem; overflow-x: auto; max-width: 100%;">
+                                    <button type="button" class="hero-tab-btn" onclick="switchHeroTab('hero-code', this)" style="background: rgba(255, 255, 255, 0.08); border: none; color: #fff; font-size: 0.7rem; font-weight: 600; cursor: pointer; padding: 0.3rem 0.6rem; border-radius: 4px; white-space: nowrap;">Source Code</button>
+                                    <button type="button" class="hero-tab-btn" onclick="switchHeroTab('hero-img-general', this)" style="background: none; border: none; color: #94a3b8; font-size: 0.7rem; font-weight: 600; cursor: pointer; padding: 0.3rem 0.6rem; border-radius: 4px; white-space: nowrap;">General</button>
+                                    <button type="button" class="hero-tab-btn" onclick="switchHeroTab('hero-img-source', this)" style="background: none; border: none; color: #94a3b8; font-size: 0.7rem; font-weight: 600; cursor: pointer; padding: 0.3rem 0.6rem; border-radius: 4px; white-space: nowrap;">Event Source</button>
+                                    <button type="button" class="hero-tab-btn" onclick="switchHeroTab('hero-img-dash', this)" style="background: none; border: none; color: #94a3b8; font-size: 0.7rem; font-weight: 600; cursor: pointer; padding: 0.3rem 0.6rem; border-radius: 4px; white-space: nowrap;">Dashboard</button>
+                                </div>
                             </div>
-                            <pre class="code-window-body"><code><span class="keyword">class</span> <span class="classname">RatulsACT_Tracker</span> {
-  <span class="keyword">private</span> <span class="variable">$first_party</span> = <span class="keyword">true</span>;
-  <span class="keyword">private</span> <span class="variable">$cookie_lifespan</span> = <span class="string">'2_years'</span>;
+                            
+                            <!-- Tab 1: Code Body -->
+                            <pre id="hero-code" class="hero-tab-content" style="margin: 0; padding: 1.5rem; overflow: auto; flex: 1; font-family: monospace; font-size: 0.85rem; line-height: 1.5; color: #cbd5e1; display: block;"><code><span class="keyword" style="color: #f43f5e;">class</span> <span class="classname" style="color: #60a5fa;">RatulsACT_Tracker</span> {
+  <span class="keyword" style="color: #f43f5e;">private</span> <span class="variable" style="color: #fb923c;">$first_party</span> = <span class="keyword" style="color: #f43f5e;">true</span>;
+  <span class="keyword" style="color: #f43f5e;">private</span> <span class="variable" style="color: #fb923c;">$cookie_lifespan</span> = <span class="string" style="color: #34d399;">'2_years'</span>;
 
-  <span class="keyword">public</span> <span class="keyword">function</span> <span class="classname">dispatch_to_capi</span>(<span class="variable">$event</span>) {
-    <span class="keyword">return</span> <span class="variable">$this</span>->enrich_payload(<span class="variable">$event</span>)
+  <span class="keyword" style="color: #f43f5e;">public</span> <span class="keyword" style="color: #f43f5e;">function</span> <span class="classname" style="color: #60a5fa;">dispatch_to_capi</span>(<span class="variable" style="color: #fb923c;">$event</span>) {
+    <span class="keyword" style="color: #f43f5e;">return</span> <span class="variable" style="color: #fb923c;">$this</span>->enrich_payload(<span class="variable" style="color: #fb923c;">$event</span>)
       ->stitch_identity()
       ->deduplicate_events()
       ->push_async();
   }
 }
-<span class="comment">// Self-hosted $0 monthly tracking gateway</span></code></pre>
+<span class="comment" style="color: #64748b;">// Self-hosted $0 monthly tracking gateway</span></code></pre>
+
+                            <!-- Tab 2: General Settings Image -->
+                            <div id="hero-img-general" class="hero-tab-content" style="display: none; padding: 1rem; overflow: auto; flex: 1; background: #0b0f19; align-items: center; justify-content: center;">
+                                <img src="<?php echo $baseUrl; ?>/assets/plugin/Settings_general.png" alt="General Settings UI" style="max-width: 100%; max-height: 290px; object-fit: contain; border-radius: 6px; box-shadow: 0 10px 25px rgba(0,0,0,0.5);">
+                            </div>
+
+                            <!-- Tab 3: Event Source Image -->
+                            <div id="hero-img-source" class="hero-tab-content" style="display: none; padding: 1rem; overflow: auto; flex: 1; background: #0b0f19; align-items: center; justify-content: center;">
+                                <img src="<?php echo $baseUrl; ?>/assets/plugin/Settings_Event_source.png" alt="Event Source Settings UI" style="max-width: 100%; max-height: 290px; object-fit: contain; border-radius: 6px; box-shadow: 0 10px 25px rgba(0,0,0,0.5);">
+                            </div>
+
+                            <!-- Tab 4: Dashboard Image -->
+                            <div id="hero-img-dash" class="hero-tab-content" style="display: none; padding: 1rem; overflow: auto; flex: 1; background: #0b0f19; align-items: center; justify-content: center;">
+                                <div style="display: flex; gap: 0.75rem; flex-direction: column; width: 100%; align-items: center; justify-content: center;">
+                                    <img src="<?php echo $baseUrl; ?>/assets/plugin/Dashboard_1.png" alt="Dashboard View 1" style="max-width: 90%; max-height: 140px; object-fit: contain; border-radius: 6px; box-shadow: 0 8px 20px rgba(0,0,0,0.4);">
+                                    <img src="<?php echo $baseUrl; ?>/assets/plugin/Dashboard_2.png" alt="Dashboard View 2" style="max-width: 90%; max-height: 140px; object-fit: contain; border-radius: 6px; box-shadow: 0 8px 20px rgba(0,0,0,0.4);">
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -2292,6 +2319,23 @@ if ($path === 'login') {
 </footer>
 
 <script>
+function switchHeroTab(tabId, btn) {
+    const container = btn.closest('.code-window');
+    container.querySelectorAll('.hero-tab-content').forEach(function(el) {
+        el.style.display = 'none';
+    });
+    const activeEl = container.querySelector('#' + tabId);
+    if (activeEl) {
+        activeEl.style.display = (tabId === 'hero-code') ? 'block' : 'flex';
+    }
+    container.querySelectorAll('.hero-tab-btn').forEach(function(b) {
+        b.style.background = 'none';
+        b.style.color = '#94a3b8';
+    });
+    btn.style.background = 'rgba(255, 255, 255, 0.08)';
+    btn.style.color = '#fff';
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     // Intercept form submissions to show the fluid button loading state
     const forms = document.querySelectorAll('form.fluid-form, .auth-card form');
