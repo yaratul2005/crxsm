@@ -748,7 +748,7 @@ if ($path === 'login') {
                         </div>
 
                         <div style="margin-top: 2rem; display: flex; gap: 1rem; flex-wrap: wrap;">
-                            <a href="#trial-section" class="btn" style="max-width: 240px; box-shadow: 0 0 20px rgba(99, 102, 241, 0.4);">Claim Free Trial Key</a>
+                            <a href="<?php echo $baseUrl; ?>/register" target="_blank" class="btn" style="max-width: 240px; box-shadow: 0 0 20px rgba(37, 99, 235, 0.4);">Claim Free Trial Key</a>
                             <a href="https://github.com/yaratul2005/ServerTrack" target="_blank" rel="noopener noreferrer" class="btn btn-secondary" style="max-width: 200px;">GitHub Repo</a>
                         </div>
                     </div>
