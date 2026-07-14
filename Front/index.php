@@ -922,8 +922,215 @@ if ($path === 'login') {
                     </div>
                 </div>
 
+                <!-- FAQ Section -->
+                <div id="faq-section" style="padding: 6rem 1.5rem 3rem 1.5rem; max-width: 900px; margin: 0 auto; width: 100%; box-sizing: border-box;">
+                    <span class="badge-tag" style="margin: 0 auto 1rem auto; display: table;">Frequently Asked Questions</span>
+                    <h2 style="text-align: center; margin-bottom: 3rem;">Privacy &amp; Conversion Tracking FAQs</h2>
+                    
+                    <div class="faq-accordion-container" style="display: flex; flex-direction: column; gap: 1rem;">
+                        <!-- FAQ Item 1 -->
+                        <div class="faq-item" style="background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; overflow: hidden; transition: all 0.3s;">
+                            <button type="button" class="faq-trigger" onclick="toggleFaq(this)" style="width: 100%; padding: 1.25rem 1.5rem; background: none; border: none; text-align: left; font-size: 1rem; font-weight: 600; color: var(--text-color); display: flex; justify-content: space-between; align-items: center; cursor: pointer; outline: none;">
+                                <span>Why am I seeing ads for products I looked at on this site?</span>
+                                <span class="faq-icon" style="font-size: 1.25rem; transition: transform 0.3s; color: var(--primary);">&plus;</span>
+                            </button>
+                            <div class="faq-content" style="max-height: 0; overflow: hidden; transition: max-height 0.35s ease-out; padding: 0 1.5rem; color: var(--text-muted); font-size: 0.925rem; line-height: 1.6;">
+                                <p style="padding-bottom: 1.25rem; margin: 0;">When you browse or add something to your cart, that action is matched with the ad platforms you already use (like Facebook or Instagram) so you see relevant reminders instead of random ads. No personally identifying details are shared with advertisers in the process.</p>
+                            </div>
+                        </div>
+                        
+                        <!-- FAQ Item 2 -->
+                        <div class="faq-item" style="background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; overflow: hidden; transition: all 0.3s;">
+                            <button type="button" class="faq-trigger" onclick="toggleFaq(this)" style="width: 100%; padding: 1.25rem 1.5rem; background: none; border: none; text-align: left; font-size: 1rem; font-weight: 600; color: var(--text-color); display: flex; justify-content: space-between; align-items: center; cursor: pointer; outline: none;">
+                                <span>Does this website track my personal information?</span>
+                                <span class="faq-icon" style="font-size: 1.25rem; transition: transform 0.3s; color: var(--primary);">&plus;</span>
+                            </button>
+                            <div class="faq-content" style="max-height: 0; overflow: hidden; transition: max-height 0.35s ease-out; padding: 0 1.5rem; color: var(--text-muted); font-size: 0.925rem; line-height: 1.6;">
+                                <p style="padding-bottom: 1.25rem; margin: 0;">We track behavior like page views, cart activity, and completed orders to measure ad performance and improve your experience. Sensitive details like your email or phone are encrypted before they ever leave our server — advertisers never see your raw data.</p>
+                            </div>
+                        </div>
+
+                        <!-- FAQ Item 3 -->
+                        <div class="faq-item" style="background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; overflow: hidden; transition: all 0.3s;">
+                            <button type="button" class="faq-trigger" onclick="toggleFaq(this)" style="width: 100%; padding: 1.25rem 1.5rem; background: none; border: none; text-align: left; font-size: 1rem; font-weight: 600; color: var(--text-color); display: flex; justify-content: space-between; align-items: center; cursor: pointer; outline: none;">
+                                <span>Is my payment information safe when you track my orders?</span>
+                                <span class="faq-icon" style="font-size: 1.25rem; transition: transform 0.3s; color: var(--primary);">&plus;</span>
+                            </button>
+                            <div class="faq-content" style="max-height: 0; overflow: hidden; transition: max-height 0.35s ease-out; padding: 0 1.5rem; color: var(--text-muted); font-size: 0.925rem; line-height: 1.6;">
+                                <p style="padding-bottom: 1.25rem; margin: 0;">Yes. Card numbers and banking details are never sent to any tracking or advertising platform. Only anonymized order data (like total value or product category) is used for marketing measurement.</p>
+                            </div>
+                        </div>
+
+                        <!-- FAQ Item 4 -->
+                        <div class="faq-item" style="background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; overflow: hidden; transition: all 0.3s;">
+                            <button type="button" class="faq-trigger" onclick="toggleFaq(this)" style="width: 100%; padding: 1.25rem 1.5rem; background: none; border: none; text-align: left; font-size: 1rem; font-weight: 600; color: var(--text-color); display: flex; justify-content: space-between; align-items: center; cursor: pointer; outline: none;">
+                                <span>Do you share my data with Facebook, Google, or TikTok?</span>
+                                <span class="faq-icon" style="font-size: 1.25rem; transition: transform 0.3s; color: var(--primary);">&plus;</span>
+                            </button>
+                            <div class="faq-content" style="max-height: 0; overflow: hidden; transition: max-height 0.35s ease-out; padding: 0 1.5rem; color: var(--text-muted); font-size: 0.925rem; line-height: 1.6;">
+                                <p style="padding-bottom: 1.25rem; margin: 0;">We send limited, encrypted signals directly from our server to confirm an ad led to a real outcome, like a purchase. This is standard practice for most online stores and helps us show you more relevant offers instead of generic ones.</p>
+                            </div>
+                        </div>
+
+                        <!-- FAQ Item 5 -->
+                        <div class="faq-item" style="background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; overflow: hidden; transition: all 0.3s;">
+                            <button type="button" class="faq-trigger" onclick="toggleFaq(this)" style="width: 100%; padding: 1.25rem 1.5rem; background: none; border: none; text-align: left; font-size: 1rem; font-weight: 600; color: var(--text-color); display: flex; justify-content: space-between; align-items: center; cursor: pointer; outline: none;">
+                                <span>Can I opt out of tracking on this website?</span>
+                                <span class="faq-icon" style="font-size: 1.25rem; transition: transform 0.3s; color: var(--primary);">&plus;</span>
+                            </button>
+                            <div class="faq-content" style="max-height: 0; overflow: hidden; transition: max-height 0.35s ease-out; padding: 0 1.5rem; color: var(--text-muted); font-size: 0.925rem; line-height: 1.6;">
+                                <p style="padding-bottom: 1.25rem; margin: 0;">Yes. If you decline tracking consent when prompted, no tracking data is sent to any platform until consent is given.</p>
+                            </div>
+                        </div>
+
+                        <!-- FAQ Item 6 -->
+                        <div class="faq-item" style="background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; overflow: hidden; transition: all 0.3s;">
+                            <button type="button" class="faq-trigger" onclick="toggleFaq(this)" style="width: 100%; padding: 1.25rem 1.5rem; background: none; border: none; text-align: left; font-size: 1rem; font-weight: 600; color: var(--text-color); display: flex; justify-content: space-between; align-items: center; cursor: pointer; outline: none;">
+                                <span>Why do I keep seeing the same product ads after visiting this site?</span>
+                                <span class="faq-icon" style="font-size: 1.25rem; transition: transform 0.3s; color: var(--primary);">&plus;</span>
+                            </button>
+                            <div class="faq-content" style="max-height: 0; overflow: hidden; transition: max-height 0.35s ease-out; padding: 0 1.5rem; color: var(--text-muted); font-size: 0.925rem; line-height: 1.6;">
+                                <p style="padding-bottom: 1.25rem; margin: 0;">That's retargeting. When you view a product, a secure signal lets the ad platform show you a reminder ad later. It's a normal part of how most stores advertise.</p>
+                            </div>
+                        </div>
+
+                        <!-- FAQ Item 7 -->
+                        <div class="faq-item" style="background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; overflow: hidden; transition: all 0.3s;">
+                            <button type="button" class="faq-trigger" onclick="toggleFaq(this)" style="width: 100%; padding: 1.25rem 1.5rem; background: none; border: none; text-align: left; font-size: 1rem; font-weight: 600; color: var(--text-color); display: flex; justify-content: space-between; align-items: center; cursor: pointer; outline: none;">
+                                <span>Does this website comply with GDPR/CCPA?</span>
+                                <span class="faq-icon" style="font-size: 1.25rem; transition: transform 0.3s; color: var(--primary);">&plus;</span>
+                            </button>
+                            <div class="faq-content" style="max-height: 0; overflow: hidden; transition: max-height 0.35s ease-out; padding: 0 1.5rem; color: var(--text-muted); font-size: 0.925rem; line-height: 1.6;">
+                                <p style="padding-bottom: 1.25rem; margin: 0;">Yes. Tracking only starts after consent is recorded, personal identifiers are encrypted before transmission, and you can disable tracking anytime through your cookie settings.</p>
+                            </div>
+                        </div>
+
+                        <!-- FAQ Item 8 -->
+                        <div class="faq-item" style="background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; overflow: hidden; transition: all 0.3s;">
+                            <button type="button" class="faq-trigger" onclick="toggleFaq(this)" style="width: 100%; padding: 1.25rem 1.5rem; background: none; border: none; text-align: left; font-size: 1rem; font-weight: 600; color: var(--text-color); display: flex; justify-content: space-between; align-items: center; cursor: pointer; outline: none;">
+                                <span>Will an ad blocker stop this site from working properly?</span>
+                                <span class="faq-icon" style="font-size: 1.25rem; transition: transform 0.3s; color: var(--primary);">&plus;</span>
+                            </button>
+                            <div class="faq-content" style="max-height: 0; overflow: hidden; transition: max-height 0.35s ease-out; padding: 0 1.5rem; color: var(--text-muted); font-size: 0.925rem; line-height: 1.6;">
+                                <p style="padding-bottom: 1.25rem; margin: 0;">No. Tracking happens from our server, not your browser, so checkout and browsing work exactly the same whether or not you use an ad blocker.</p>
+                            </div>
+                        </div>
+
+                        <!-- FAQ Item 9 -->
+                        <div class="faq-item" style="background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; overflow: hidden; transition: all 0.3s;">
+                            <button type="button" class="faq-trigger" onclick="toggleFaq(this)" style="width: 100%; padding: 1.25rem 1.5rem; background: none; border: none; text-align: left; font-size: 1rem; font-weight: 600; color: var(--text-color); display: flex; justify-content: space-between; align-items: center; cursor: pointer; outline: none;">
+                                <span>Does tracking slow down your website?</span>
+                                <span class="faq-icon" style="font-size: 1.25rem; transition: transform 0.3s; color: var(--primary);">&plus;</span>
+                            </button>
+                            <div class="faq-content" style="max-height: 0; overflow: hidden; transition: max-height 0.35s ease-out; padding: 0 1.5rem; color: var(--text-muted); font-size: 0.925rem; line-height: 1.6;">
+                                <p style="padding-bottom: 1.25rem; margin: 0;">No. Conversion data is sent from the server after your page has already loaded, so it has no impact on load times or site speed.</p>
+                            </div>
+                        </div>
+
+                        <!-- FAQ Item 10 -->
+                        <div class="faq-item" style="background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; overflow: hidden; transition: all 0.3s;">
+                            <button type="button" class="faq-trigger" onclick="toggleFaq(this)" style="width: 100%; padding: 1.25rem 1.5rem; background: none; border: none; text-align: left; font-size: 1rem; font-weight: 600; color: var(--text-color); display: flex; justify-content: space-between; align-items: center; cursor: pointer; outline: none;">
+                                <span>What happens to my cart data if I don't complete a purchase?</span>
+                                <span class="faq-icon" style="font-size: 1.25rem; transition: transform 0.3s; color: var(--primary);">&plus;</span>
+                            </button>
+                            <div class="faq-content" style="max-height: 0; overflow: hidden; transition: max-height 0.35s ease-out; padding: 0 1.5rem; color: var(--text-muted); font-size: 0.925rem; line-height: 1.6;">
+                                <p style="padding-bottom: 1.25rem; margin: 0;">With consent, that signal may be used to show you a reminder ad about items you left behind. No payment or contact details are shared for this — only anonymized behavior data.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <script type="application/ld+json">
+                {
+                  "@context": "https://schema.org",
+                  "@type": "FAQPage",
+                  "mainEntity": [
+                    {
+                      "@type": "Question",
+                      "name": "Why am I seeing ads for products I looked at on this site?",
+                      "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "When you browse or add something to your cart, that action is matched with the ad platforms you already use (like Facebook or Instagram) so you see relevant reminders instead of random ads. No personally identifying details are shared with advertisers in the process."
+                      }
+                    },
+                    {
+                      "@type": "Question",
+                      "name": "Does this website track my personal information?",
+                      "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "We track behavior like page views, cart activity, and completed orders to measure ad performance and improve your experience. Sensitive details like your email or phone are encrypted before they ever leave our server — advertisers never see your raw data."
+                      }
+                    },
+                    {
+                      "@type": "Question",
+                      "name": "Is my payment information safe when you track my orders?",
+                      "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "Yes. Card numbers and banking details are never sent to any tracking or advertising platform. Only anonymized order data (like total value or product category) is used for marketing measurement."
+                      }
+                    },
+                    {
+                      "@type": "Question",
+                      "name": "Do you share my data with Facebook, Google, or TikTok?",
+                      "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "We send limited, encrypted signals directly from our server to confirm an ad led to a real outcome, like a purchase. This is standard practice for most online stores and helps us show you more relevant offers instead of generic ones."
+                      }
+                    },
+                    {
+                      "@type": "Question",
+                      "name": "Can I opt out of tracking on this website?",
+                      "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "Yes. If you decline tracking consent when prompted, no tracking data is sent to any platform until consent is given."
+                      }
+                    },
+                    {
+                      "@type": "Question",
+                      "name": "Why do I keep seeing the same product ads after visiting this site?",
+                      "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "That's retargeting. When you view a product, a secure signal lets the ad platform show you a reminder ad later. It's a normal part of how most stores advertise."
+                      }
+                    },
+                    {
+                      "@type": "Question",
+                      "name": "Does this website comply with GDPR/CCPA?",
+                      "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "Yes. Tracking only starts after consent is recorded, personal identifiers are encrypted before transmission, and you can disable tracking anytime through your cookie settings."
+                      }
+                    },
+                    {
+                      "@type": "Question",
+                      "name": "Will an ad blocker stop this site from working properly?",
+                      "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "No. Tracking happens from our server, not your browser, so checkout and browsing work exactly the same whether or not you use an ad blocker."
+                      }
+                    },
+                    {
+                      "@type": "Question",
+                      "name": "Does tracking slow down your website?",
+                      "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "No. Conversion data is sent from the server after your page has already loaded, so it has no impact on load times or site speed."
+                      }
+                    },
+                    {
+                      "@type": "Question",
+                      "name": "What happens to my cart data if I don't complete a purchase?",
+                      "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "With consent, that signal may be used to show you a reminder ad about items you left behind. No payment or contact details are shared for this — only anonymized behavior data."
+                      }
+                    }
+                  ]
+                }
+                </script>
+
                 <!-- Dynamic Onboarding & Support Ticket Panel Section -->
-                <div id="trial-section" style="padding: 6rem 0 2rem 0; text-align: center; max-width: 650px; margin: 0 auto;">
+                <div id="trial-section" style="padding: 3rem 0 2rem 0; text-align: center; max-width: 650px; margin: 0 auto;">
                     <?php
                     $activeToken = trim($_GET['token'] ?? '');
                     $activeTicket = null;
@@ -2420,6 +2627,36 @@ function clickSlide(index) {
         nextSlide(true);
     } else if (offset === total - 1) {
         prevSlide(true);
+    }
+}
+
+function toggleFaq(btn) {
+    const item = btn.closest('.faq-item');
+    const content = item.querySelector('.faq-content');
+    const icon = btn.querySelector('.faq-icon');
+    
+    if (content.style.maxHeight && content.style.maxHeight !== '0px') {
+        content.style.maxHeight = '0px';
+        icon.innerHTML = '&plus;';
+        icon.style.transform = 'rotate(0deg)';
+        item.style.borderColor = 'var(--border-color)';
+        item.style.boxShadow = 'none';
+    } else {
+        document.querySelectorAll('.faq-item').forEach(function(otherItem) {
+            const otherContent = otherItem.querySelector('.faq-content');
+            const otherIcon = otherItem.querySelector('.faq-icon');
+            otherContent.style.maxHeight = '0px';
+            otherIcon.innerHTML = '&plus;';
+            otherIcon.style.transform = 'rotate(0deg)';
+            otherItem.style.borderColor = 'var(--border-color)';
+            otherItem.style.boxShadow = 'none';
+        });
+        
+        content.style.maxHeight = content.scrollHeight + 'px';
+        icon.innerHTML = '&minus;';
+        icon.style.transform = 'rotate(180deg)';
+        item.style.borderColor = 'var(--primary)';
+        item.style.boxShadow = '0 10px 25px rgba(37, 99, 235, 0.04)';
     }
 }
 
