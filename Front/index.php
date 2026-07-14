@@ -971,11 +971,11 @@ if ($path === 'login') {
                         </div>
 
                     <?php else: ?>
-                        <!-- MULTI-TAB ONBOARDING & SUPPORT PANEL -->
-                        <span class="badge-tag" style="margin-bottom: 1rem;">Onboarding & Support</span>
-                        <h2>Get Started or Request Support</h2>
+                        <!-- MULTI-TAB SUPPORT PANEL -->
+                        <span class="badge-tag" style="margin-bottom: 1rem;">Support Center</span>
+                        <h2>Support &amp; Ticketing Portal</h2>
                         <p style="color: var(--text-muted); margin: 0.5rem 0 2.5rem 0; font-size: 0.95rem;">
-                            Claim your free trial license key, open a secure support ticket, or check updates on an existing inquiry.
+                            Open a secure support ticket for inquiries or enter your token below to track updates on existing tickets.
                         </p>
 
                         <?php if (!empty($activeToken)): ?>
@@ -988,35 +988,12 @@ if ($path === 'login') {
                         <div class="trial-card glow-base" style="margin-top: 1rem; padding: 2.5rem 2rem;">
                             <!-- Tabs Header -->
                             <div class="onboarding-tabs" style="display:flex; justify-content:space-between; gap:0.5rem; border-bottom:1px solid rgba(15,23,42,0.08); padding-bottom:1rem; margin-bottom:2rem;">
-                                <button type="button" class="tab-btn active" onclick="switchOnboardingTab('claim-tab')" style="flex:1; padding:0.6rem 0.5rem; font-size:0.85rem; font-weight:700; border:none; background:none; color:var(--text-muted); cursor:pointer; transition:all 0.2s; border-bottom:3px solid transparent;">Claim Trial</button>
-                                <button type="button" class="tab-btn" onclick="switchOnboardingTab('ticket-tab')" style="flex:1; padding:0.6rem 0.5rem; font-size:0.85rem; font-weight:700; border:none; background:none; color:var(--text-muted); cursor:pointer; transition:all 0.2s; border-bottom:3px solid transparent;">Open Ticket</button>
+                                <button type="button" class="tab-btn active" onclick="switchOnboardingTab('ticket-tab')" style="flex:1; padding:0.6rem 0.5rem; font-size:0.85rem; font-weight:700; border:none; background:none; color:var(--text-muted); cursor:pointer; transition:all 0.2s; border-bottom:3px solid transparent;">Open Ticket</button>
                                 <button type="button" class="tab-btn" onclick="switchOnboardingTab('track-tab')" style="flex:1; padding:0.6rem 0.5rem; font-size:0.85rem; font-weight:700; border:none; background:none; color:var(--text-muted); cursor:pointer; transition:all 0.2s; border-bottom:3px solid transparent;">Track Ticket</button>
                             </div>
 
-                            <!-- Tab 1: Claim Free License -->
-                            <div id="claim-tab" class="tab-content active-content">
-                                <form action="<?php echo $baseUrl; ?>/claim-trial" method="post" class="fluid-form">
-                                    <?php echo Csrf::getHiddenInput(); ?>
-                                    <div class="form-group">
-                                        <label class="form-label" style="text-align:left;">Your Name</label>
-                                        <input type="text" name="name" required placeholder="e.g. Yaser Ratul">
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="form-label" style="text-align:left;">Email Address</label>
-                                        <input type="email" name="email" required placeholder="e.g. owner@yaratul.com">
-                                    </div>
-                                    <?php echo Captcha::render(); ?>
-                                    <button type="submit" class="btn fluid-btn" style="padding: 1rem; font-size: 1rem; margin-top: 1rem; font-weight: 700; width: 100%;">
-                                        Claim Trial License
-                                    </button>
-                                </form>
-                                <span style="font-size:0.75rem; color:var(--text-muted); display:block; margin-top:1.25rem;">
-                                    *No credit card required. Free updates and secure zip file downloads included.
-                                </span>
-                            </div>
-
-                            <!-- Tab 2: Create Support Ticket -->
-                            <div id="ticket-tab" class="tab-content" style="display:none;">
+                            <!-- Tab 1: Create Support Ticket -->
+                            <div id="ticket-tab" class="tab-content active-content" style="display:block;">
                                 <form action="<?php echo $baseUrl; ?>/open-ticket" method="post" class="fluid-form">
                                     <?php echo Csrf::getHiddenInput(); ?>
                                     <div style="display:grid; grid-template-columns: 1fr 1fr; gap:1rem;">
@@ -1044,7 +1021,7 @@ if ($path === 'login') {
                                 </form>
                             </div>
 
-                            <!-- Tab 3: Track Ticket -->
+                            <!-- Tab 2: Track Ticket -->
                             <div id="track-tab" class="tab-content" style="display:none;">
                                 <form action="<?php echo $baseUrl; ?>/" method="get" class="fluid-form">
                                     <div class="form-group">
