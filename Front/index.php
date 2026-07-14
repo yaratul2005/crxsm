@@ -776,51 +776,24 @@ if ($path === 'login') {
                     </div>
 
                     <div class="hero-right">
-                        <div class="code-window" style="display: flex; flex-direction: column; min-height: 380px;">
-                            <div class="code-window-header" style="display: flex; align-items: center; justify-content: space-between; padding: 0.75rem 1rem; background: rgba(15, 23, 42, 0.9); border-bottom: 1px solid rgba(255, 255, 255, 0.06); flex-shrink: 0; flex-wrap: wrap; gap: 0.5rem;">
-                                <div style="display: flex; gap: 6px; align-items: center;">
-                                    <span class="dot red" style="width: 10px; height: 10px; border-radius: 50%; background: #ef4444; display: inline-block;"></span>
-                                    <span class="dot yellow" style="width: 10px; height: 10px; border-radius: 50%; background: #f59e0b; display: inline-block;"></span>
-                                    <span class="dot green" style="width: 10px; height: 10px; border-radius: 50%; background: #10b981; display: inline-block;"></span>
-                                </div>
-                                <div class="hero-tabs" style="display: flex; gap: 0.3rem; overflow-x: auto; max-width: 100%;">
-                                    <button type="button" class="hero-tab-btn" onclick="switchHeroTab('hero-code', this)" style="background: rgba(255, 255, 255, 0.08); border: none; color: #fff; font-size: 0.7rem; font-weight: 600; cursor: pointer; padding: 0.3rem 0.6rem; border-radius: 4px; white-space: nowrap;">Source Code</button>
-                                    <button type="button" class="hero-tab-btn" onclick="switchHeroTab('hero-img-general', this)" style="background: none; border: none; color: #94a3b8; font-size: 0.7rem; font-weight: 600; cursor: pointer; padding: 0.3rem 0.6rem; border-radius: 4px; white-space: nowrap;">General</button>
-                                    <button type="button" class="hero-tab-btn" onclick="switchHeroTab('hero-img-source', this)" style="background: none; border: none; color: #94a3b8; font-size: 0.7rem; font-weight: 600; cursor: pointer; padding: 0.3rem 0.6rem; border-radius: 4px; white-space: nowrap;">Event Source</button>
-                                    <button type="button" class="hero-tab-btn" onclick="switchHeroTab('hero-img-dash', this)" style="background: none; border: none; color: #94a3b8; font-size: 0.7rem; font-weight: 600; cursor: pointer; padding: 0.3rem 0.6rem; border-radius: 4px; white-space: nowrap;">Dashboard</button>
-                                </div>
+                        <div class="deck-container">
+                            <div class="deck-slide active" onclick="clickSlide(0)">
+                                <img src="<?php echo $baseUrl; ?>/assets/plugin/Dashboard_1.png" alt="Dashboard Analytics Summary">
+                            </div>
+                            <div class="deck-slide next" onclick="clickSlide(1)">
+                                <img src="<?php echo $baseUrl; ?>/assets/plugin/Settings_general.png" alt="General Settings Configuration">
+                            </div>
+                            <div class="deck-slide far" onclick="clickSlide(2)">
+                                <img src="<?php echo $baseUrl; ?>/assets/plugin/Settings_Event_source.png" alt="Event Source Triggers">
+                            </div>
+                            <div class="deck-slide prev" onclick="clickSlide(3)">
+                                <img src="<?php echo $baseUrl; ?>/assets/plugin/Dashboard_2.png" alt="Detailed Conversion Reports">
                             </div>
                             
-                            <!-- Tab 1: Code Body -->
-                            <pre id="hero-code" class="hero-tab-content" style="margin: 0; padding: 1.5rem; overflow: auto; flex: 1; font-family: monospace; font-size: 0.85rem; line-height: 1.5; color: #cbd5e1; display: block;"><code><span class="keyword" style="color: #f43f5e;">class</span> <span class="classname" style="color: #60a5fa;">RatulsACT_Tracker</span> {
-  <span class="keyword" style="color: #f43f5e;">private</span> <span class="variable" style="color: #fb923c;">$first_party</span> = <span class="keyword" style="color: #f43f5e;">true</span>;
-  <span class="keyword" style="color: #f43f5e;">private</span> <span class="variable" style="color: #fb923c;">$cookie_lifespan</span> = <span class="string" style="color: #34d399;">'2_years'</span>;
-
-  <span class="keyword" style="color: #f43f5e;">public</span> <span class="keyword" style="color: #f43f5e;">function</span> <span class="classname" style="color: #60a5fa;">dispatch_to_capi</span>(<span class="variable" style="color: #fb923c;">$event</span>) {
-    <span class="keyword" style="color: #f43f5e;">return</span> <span class="variable" style="color: #fb923c;">$this</span>->enrich_payload(<span class="variable" style="color: #fb923c;">$event</span>)
-      ->stitch_identity()
-      ->deduplicate_events()
-      ->push_async();
-  }
-}
-<span class="comment" style="color: #64748b;">// Self-hosted $0 monthly tracking gateway</span></code></pre>
-
-                            <!-- Tab 2: General Settings Image -->
-                            <div id="hero-img-general" class="hero-tab-content" style="display: none; padding: 1rem; overflow: auto; flex: 1; background: #0b0f19; align-items: center; justify-content: center;">
-                                <img src="<?php echo $baseUrl; ?>/assets/plugin/Settings_general.png" alt="General Settings UI" style="max-width: 100%; max-height: 290px; object-fit: contain; border-radius: 6px; box-shadow: 0 10px 25px rgba(0,0,0,0.5);">
-                            </div>
-
-                            <!-- Tab 3: Event Source Image -->
-                            <div id="hero-img-source" class="hero-tab-content" style="display: none; padding: 1rem; overflow: auto; flex: 1; background: #0b0f19; align-items: center; justify-content: center;">
-                                <img src="<?php echo $baseUrl; ?>/assets/plugin/Settings_Event_source.png" alt="Event Source Settings UI" style="max-width: 100%; max-height: 290px; object-fit: contain; border-radius: 6px; box-shadow: 0 10px 25px rgba(0,0,0,0.5);">
-                            </div>
-
-                            <!-- Tab 4: Dashboard Image -->
-                            <div id="hero-img-dash" class="hero-tab-content" style="display: none; padding: 1rem; overflow: auto; flex: 1; background: #0b0f19; align-items: center; justify-content: center;">
-                                <div style="display: flex; gap: 0.75rem; flex-direction: column; width: 100%; align-items: center; justify-content: center;">
-                                    <img src="<?php echo $baseUrl; ?>/assets/plugin/Dashboard_1.png" alt="Dashboard View 1" style="max-width: 90%; max-height: 140px; object-fit: contain; border-radius: 6px; box-shadow: 0 8px 20px rgba(0,0,0,0.4);">
-                                    <img src="<?php echo $baseUrl; ?>/assets/plugin/Dashboard_2.png" alt="Dashboard View 2" style="max-width: 90%; max-height: 140px; object-fit: contain; border-radius: 6px; box-shadow: 0 8px 20px rgba(0,0,0,0.4);">
-                                </div>
+                            <!-- Deck Navigation Controls -->
+                            <div class="deck-controls">
+                                <button type="button" class="deck-btn prev-btn" onclick="prevSlide()" aria-label="Previous Slide">&larr;</button>
+                                <button type="button" class="deck-btn next-btn" onclick="nextSlide()" aria-label="Next Slide">&rarr;</button>
                             </div>
                         </div>
                     </div>
@@ -1896,59 +1869,124 @@ if ($path === 'login') {
             }
         }
 
-        /* Glassmorphic Code Window */
-        .code-window {
-            background: #0f172a;
-            border: 1px solid rgba(37, 99, 235, 0.15);
-            border-radius: 16px;
-            backdrop-filter: blur(24px);
-            box-shadow: 0 20px 50px rgba(15, 23, 42, 0.15);
-            overflow: hidden;
-            text-align: left;
-            transition: transform 0.3s;
+        /* 3D Perspective Slide Deck */
+        .deck-container {
+            position: relative;
             width: 100%;
-            max-width: 100%;
-            box-sizing: border-box;
-        }
-        .code-window:hover {
-            transform: translateY(-5px);
-        }
-        .code-window-header {
-            background: rgba(255, 255, 255, 0.02);
-            padding: 1rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            height: 380px;
+            perspective: 1200px;
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            justify-content: center;
         }
-        .code-window-header .dot {
-            width: 12px;
-            height: 12px;
+
+        .deck-slide {
+            position: absolute;
+            width: 92%;
+            max-width: 450px;
+            height: 260px;
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            box-shadow: 0 15px 45px rgba(15, 23, 42, 0.08);
+            overflow: hidden;
+            transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.6s, z-index 0.6s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.5rem;
+            box-sizing: border-box;
+            background-clip: padding-box;
+        }
+
+        .deck-slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            border-radius: 10px;
+        }
+
+        /* 3D Card States */
+        .deck-slide.active {
+            transform: translate3d(0, 0, 0) scale(1);
+            z-index: 5;
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .deck-slide.next {
+            transform: translate3d(28%, 0, -120px) rotateY(-18deg) scale(0.85);
+            z-index: 4;
+            opacity: 0.75;
+            pointer-events: auto;
+            cursor: pointer;
+        }
+
+        .deck-slide.prev {
+            transform: translate3d(-28%, 0, -120px) rotateY(18deg) scale(0.85);
+            z-index: 4;
+            opacity: 0.75;
+            pointer-events: auto;
+            cursor: pointer;
+        }
+
+        .deck-slide.far {
+            transform: translate3d(0, 0, -220px) scale(0.7);
+            z-index: 2;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* Deck Navigation Controls */
+        .deck-controls {
+            position: absolute;
+            bottom: -5px;
+            display: flex;
+            gap: 1.5rem;
+            z-index: 10;
+        }
+
+        .deck-btn {
+            background: #ffffff;
+            border: 1px solid rgba(15, 23, 42, 0.06);
+            color: #0f172a;
+            width: 42px;
+            height: 42px;
             border-radius: 50%;
-            display: inline-block;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(15, 23, 42, 0.04);
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            outline: none;
         }
-        .code-window-header .dot.red { background: #ef4444; }
-        .code-window-header .dot.yellow { background: #f59e0b; }
-        .code-window-header .dot.green { background: #10b981; }
-        .code-window-header .title {
-            margin-left: auto;
-            font-size: 0.75rem;
-            font-family: monospace;
-            color: var(--text-muted);
+
+        .deck-btn:hover {
+            background: var(--primary);
+            color: #ffffff;
+            border-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(37, 99, 235, 0.25);
         }
-        .code-window-body {
-            padding: 1.5rem;
-            font-family: monospace;
-            font-size: 0.85rem;
-            line-height: 1.6;
-            margin: 0;
-            overflow-x: auto;
+
+        @media (max-width: 768px) {
+            .deck-container {
+                height: 310px;
+                margin-top: 2rem;
+            }
+            .deck-slide {
+                height: 200px;
+                max-width: 330px;
+            }
+            .deck-slide.next {
+                transform: translate3d(18%, 0, -80px) rotateY(-12deg) scale(0.85);
+            }
+            .deck-slide.prev {
+                transform: translate3d(-18%, 0, -80px) rotateY(12deg) scale(0.85);
+            }
         }
-        .code-window-body .keyword { color: #f43f5e; }
-        .code-window-body .classname { color: #38bdf8; }
-        .code-window-body .variable { color: #a5b4fc; }
-        .code-window-body .string { color: #10b981; }
-        .code-window-body .comment { color: #6b7280; font-style: italic; }
 
         /* Feature Section & Cards */
         .landing-features {
@@ -2319,24 +2357,59 @@ if ($path === 'login') {
 </footer>
 
 <script>
-function switchHeroTab(tabId, btn) {
-    const container = btn.closest('.code-window');
-    container.querySelectorAll('.hero-tab-content').forEach(function(el) {
-        el.style.display = 'none';
+let currentSlideIndex = 0;
+
+function updateDeck() {
+    const slides = document.querySelectorAll('.deck-slide');
+    const total = slides.length;
+    if (total === 0) return;
+    
+    slides.forEach(function(slide, index) {
+        slide.classList.remove('active', 'next', 'prev', 'far');
+        const offset = (index - currentSlideIndex + total) % total;
+        
+        if (offset === 0) {
+            slide.classList.add('active');
+        } else if (offset === 1) {
+            slide.classList.add('next');
+        } else if (offset === total - 1) {
+            slide.classList.add('prev');
+        } else {
+            slide.classList.add('far');
+        }
     });
-    const activeEl = container.querySelector('#' + tabId);
-    if (activeEl) {
-        activeEl.style.display = (tabId === 'hero-code') ? 'block' : 'flex';
+}
+
+function nextSlide() {
+    const slides = document.querySelectorAll('.deck-slide');
+    if (slides.length === 0) return;
+    currentSlideIndex = (currentSlideIndex + 1) % slides.length;
+    updateDeck();
+}
+
+function prevSlide() {
+    const slides = document.querySelectorAll('.deck-slide');
+    if (slides.length === 0) return;
+    currentSlideIndex = (currentSlideIndex - 1 + slides.length) % slides.length;
+    updateDeck();
+}
+
+function clickSlide(index) {
+    const slides = document.querySelectorAll('.deck-slide');
+    const total = slides.length;
+    if (total === 0) return;
+    const offset = (index - currentSlideIndex + total) % total;
+    if (offset === 1) {
+        nextSlide();
+    } else if (offset === total - 1) {
+        prevSlide();
     }
-    container.querySelectorAll('.hero-tab-btn').forEach(function(b) {
-        b.style.background = 'none';
-        b.style.color = '#94a3b8';
-    });
-    btn.style.background = 'rgba(255, 255, 255, 0.08)';
-    btn.style.color = '#fff';
 }
 
 document.addEventListener('DOMContentLoaded', function() {
+    // Initialize 3D deck position
+    updateDeck();
+
     // Intercept form submissions to show the fluid button loading state
     const forms = document.querySelectorAll('form.fluid-form, .auth-card form');
     forms.forEach(function(form) {
